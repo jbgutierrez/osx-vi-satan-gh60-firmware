@@ -28,7 +28,7 @@ Let's try a few tweaks!
 
 * [Layout](http://www.keyboard-layout-editor.com/#/gists/909582620181ef0aac54f6435a1d4a7e)
 
-* Closely mimics the behaviour of [TouchCursor](http://martin-stone.github.io/touchcursor/) software from a vi user point of view. Motion keys are provided `h`, `j`, `k`, `l`, `b`, `w`, `ctrl-u` and `ctrl-d` to improve cursor navitation. You can even enter `visual mode` with `v` and select text while hitting motion keys. Keys `y`, `space`, `delete` reset `visual mode`.
+* Closely mimics the behaviour of [TouchCursor](http://martin-stone.github.io/touchcursor/) software from a vi user point of view. Motion keys are provided `h`, `j`, `k`, `l`, `b`, `w`, `ctrl-u` and `ctrl-d` to improve cursor navigation. You can even enter `visual mode` with `v` and select text while hitting motion keys. Keys `y`, `space`, `delete` reset `visual mode`.
 
 * `esc` deactivates layer.
 
@@ -46,7 +46,7 @@ Let's try a few tweaks!
 
 ### Tap-dancing keys
 
-* Shift, Alt, and Control modifiers are one-shot. When tapped, they are considered active for the inmediate next key stroke. When double tapped, they toggle on, until a third, single tap sometime later. When held, they act as expected.
+* Shift, Alt, and Control modifiers are one-shot. When tapped, they are considered active for the immediate next key stroke. When double tapped, they toggle on, until a third, single tap sometime later. When held, they act as expected.
 
 * Tapping `:` key once yields `:`, tapping it twice yields `;`.
 
