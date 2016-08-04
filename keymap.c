@@ -12,7 +12,11 @@
 #define _______ KC_TRNS
 
 enum function_id {
-  SHIFT_ESC,
+  SHIFT_ESC = 0,
+  F_BSE,
+  F_SFT,
+  F_ALT,
+  F_CTRL
 };
 
 enum macro_id {
@@ -38,11 +42,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * `-----------------------------------------------------------'
    */
 [_BL] = KEYMAP(
-  F(0),    KC_1,   KC_2,   KC_3,   KC_4,   KC_5,   KC_6,   KC_7,   KC_8,   KC_9,   KC_0,   KC_MINS, KC_EQL, KC_BSPC, \
-  KC_TAB,  KC_Q,   KC_W,   KC_E,   KC_R,   KC_T,   KC_Y,   KC_U,   KC_I,   KC_O,   KC_P,   KC_LBRC, KC_RBRC,KC_BSLS, \
-  KC_CAPS, KC_A,   KC_S,   KC_D,   KC_F,   KC_G,   KC_H,   KC_J,   KC_K,   KC_L,   KC_SCLN,KC_QUOT,         KC_ENT,  \
-  KC_LSFT,         KC_Z,   KC_X,   KC_C,   KC_V,   KC_B,   KC_N,   KC_M,   KC_COMM,KC_DOT, KC_SLSH,         KC_RSFT, \
-  KC_LCTL, KC_LALT,KC_LGUI,                KC_SPC,                                 KC_RGUI,KC_RALT, KC_RCTL,MO(_AL)),
+  F(0),       KC_1,      KC_2,     KC_3,  KC_4,  KC_5,   KC_6,  KC_7,  KC_8,  KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC, \
+  KC_TAB,     KC_Q,      KC_W,     KC_E,  KC_R,  KC_T,   KC_Y,  KC_U,  KC_I,  KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS, \
+  KC_CAPS,    KC_A,      KC_S,     KC_D,  KC_F,  KC_G,   KC_H,  KC_J,  KC_K,  KC_L,     KC_SCLN,  KC_QUOT,            KC_ENT,  \
+  F(F_SFT),              KC_Z,     KC_X,  KC_C,  KC_V,   KC_B,  KC_N,  KC_M,  KC_COMM,  KC_DOT,   KC_SLSH,            KC_RSFT, \
+  F(F_CTRL),  F(F_ALT),  KC_LGUI,                KC_SPC,                                KC_RGUI,  KC_RALT,  KC_RCTL,  MO(_AL)),
 
 /* Keymap _AL: Arrow Layer
    * ,-----------------------------------------------------------.
@@ -58,11 +62,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * `-----------------------------------------------------------'
    */
 [_AL] = KEYMAP(
-  KC_GRV , _______, _______,       _______, KC_END,  _______, _______,       _______,  _______, _______, KC_HOME, _______, _______, KC_BSPC, \
-  _______, _______, LALT(KC_RGHT), KC_END,  _______, _______, _______,       KC_PGUP,  KC_INS,  _______, KC_PAST, _______, _______, _______, \
-  _______, _______, KC_HOME,       KC_PGDN, _______, _______, KC_LEFT,       KC_DOWN,  KC_UP,   KC_RGHT, _______, _______,          _______, \
-  _______,          _______,       KC_DEL,  _______, KC_CAPS, LALT(KC_RGHT), _______,  _______, _______, _______, _______,          _______, \
-  _______, _______, _______,                                  _______,                                   _______, _______, _______, _______),
+  F(F_BSE), _______, _______,       _______, KC_END,  _______, _______,       _______,  _______, _______, KC_HOME, _______, _______, KC_BSPC, \
+  _______ , _______, LALT(KC_RGHT), KC_END,  _______, _______, _______,       KC_PGUP,  KC_INS,  _______, KC_PAST, _______, _______, _______, \
+  _______ , _______, KC_HOME,       KC_PGDN, _______, _______, KC_LEFT,       KC_DOWN,  KC_UP,   KC_RGHT, _______, _______,          _______, \
+  _______ ,          _______,       KC_DEL,  _______, KC_CAPS, LALT(KC_RGHT), _______,  _______, _______, _______, _______,          _______, \
+  _______ , _______, _______,                                  _______,                                   _______, _______, _______, _______),
 
   /* Keymap _ML: Media and Mouse Layer
    * ,-----------------------------------------------------------.
@@ -78,15 +82,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * `-----------------------------------------------------------'
    */
 [_ML] = KEYMAP(
-  KC_GRV , KC_F14,  KC_F15,  _______, _______ , _______, _______, KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD, KC_VOLU, _______, \
-  _______, _______, _______, _______, _______ , _______, _______, M(A_MUL), KC_MS_U,  M(A_MUR), _______,  _______, _______, _______, \
-  _______, _______, _______, KC_BTN1, KC_BTN2 , _______, _______, KC_MS_L,  _______,  KC_MS_R,  _______,  _______,          _______, \
-  _______,          _______, _______, _______ , _______, _______, _______,  M(A_MDL), KC_MS_D,  M(A_MDR), _______,          _______, \
-  _______, _______, _______,                             KC_MPLY,                               _______,  _______, _______, _______),
+  F(F_BSE), KC_F14,  KC_F15,  _______, _______ , _______, _______, KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD, KC_VOLU, _______, \
+  _______ , _______, _______, _______, _______ , _______, _______, M(A_MUL), KC_MS_U,  M(A_MUR), _______,  _______, _______, _______, \
+  _______ , _______, _______, KC_BTN1, KC_BTN2 , _______, _______, KC_MS_L,  _______,  KC_MS_R,  _______,  _______,          _______, \
+  _______ ,          _______, _______, _______ , _______, _______, _______,  M(A_MDL), KC_MS_D,  M(A_MDR), _______,          _______, \
+  _______ , _______, _______,                             KC_MPLY,                               _______,  _______, _______, _______),
 };
 
 const uint16_t PROGMEM fn_actions[] = {
-  [0]  = ACTION_FUNCTION(SHIFT_ESC),
+  [0]      = ACTION_FUNCTION(SHIFT_ESC),
+  [F_BSE]  = ACTION_LAYER_CLEAR(ON_PRESS),
+  [F_SFT]  = ACTION_MODS_ONESHOT(MOD_LSFT),
+  [F_ALT]  = ACTION_MODS_ONESHOT(MOD_LALT),
+  [F_CTRL] = ACTION_MODS_ONESHOT(MOD_LCTL),
 };
 
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
