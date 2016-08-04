@@ -1,5 +1,6 @@
 #include "satan.h"
 #include "mousekey.h"
+#include "action_tapping.h"
 
 
 // Used for SHIFT_ESC
@@ -21,11 +22,28 @@ enum function_id {
 
 enum macro_id {
   NONE = 0,
+
+  // Diagonal mouse movement
   A_MUL,
   A_MUR,
   A_MDL,
   A_MDR,
+
+  // Function / number keys
+  KF_1, // 1, F1
+  KF_2, // 2, F2
+  KF_3, // ...
+  KF_4,
+  KF_5,
+  KF_6,
+  KF_7,
+  KF_8,
+  KF_9,
+  KF_10,
+  KF_11, // =, F11
 };
+
+uint16_t kf_timers[12];
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   /* Keymap _BL: (Base Layer) Default Layer
@@ -123,6 +141,29 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
   }
 }
 
+void ang_handle_kf(keyrecord_t *record, uint8_t id) {
+  uint8_t code = id - KF_1;
+
+  if (record->event.pressed) {
+    kf_timers[code] = timer_read();
+  } else {
+    uint8_t kc;
+
+    if (timer_elapsed(kf_timers[code]) > TAPPING_TERM) {
+      // Long press
+      kc = KC_F1 + code;
+    } else {
+      if (id == KF_11)
+        kc = KC_EQL;
+      else
+        kc = KC_1 + code;
+    }
+
+    register_code(kc);
+    unregister_code(kc);
+  }
+}
+
 const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
 {
   switch(id) {
@@ -172,6 +213,10 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
         mousekey_off(KC_MS_RIGHT);
       }
       mousekey_send();
+      break;
+
+    case KF_1 ... KF_11:
+      ang_handle_kf(record, id);
       break;
   }
   return MACRO_NONE;
