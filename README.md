@@ -55,8 +55,8 @@ Let's try a few tweaks!
 To make a better use of `CapsLock` this is remapped as the leader key. The following key sequences are provided:
 
 * `c` activates cursor layer
-* `d` toggles logging keypress positions to the HID console
-* `e` launches expose and enters mouse layer
+* `d` shows desktop
+* `e` launches exposé and enters mouse layer
 * `l` locks screen
 * `m` activates mouse and media layer
 * `p` types password. Actual key sequence and password won't be under version control :smirk:

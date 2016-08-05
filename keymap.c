@@ -56,7 +56,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |-----------------------------------------------------------|
    * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|  \  |
    * |-----------------------------------------------------------|
-   * |CAPS   |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return |
+   * |Leader |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return |
    * |-----------------------------------------------------------|
    * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift     |
    * |-----------------------------------------------------------|
@@ -66,7 +66,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_BL] = KEYMAP(
   F(0),       KC_1,      KC_2,     KC_3,  KC_4,  KC_5,   KC_6,  KC_7,  KC_8,  KC_9,     KC_0,         KC_MINS,  KC_EQL,   KC_BSPC, \
   KC_TAB,     KC_Q,      KC_W,     KC_E,  KC_R,  KC_T,   KC_Y,  KC_U,  KC_I,  KC_O,     KC_P,         KC_LBRC,  KC_RBRC,  KC_BSLS, \
-  KC_CAPS,    KC_A,      KC_S,     KC_D,  KC_F,  KC_G,   KC_H,  KC_J,  KC_K,  KC_L,     TD(TD_SCLN),  KC_QUOT,            KC_ENT,  \
+  KC_LEAD,    KC_A,      KC_S,     KC_D,  KC_F,  KC_G,   KC_H,  KC_J,  KC_K,  KC_L,     TD(TD_SCLN),  KC_QUOT,            KC_ENT,  \
   F(F_SFT),              KC_Z,     KC_X,  KC_C,  KC_V,   KC_B,  KC_N,  KC_M,  KC_COMM,  KC_DOT,       KC_SLSH,            KC_RSFT, \
   F(F_CTRL),  F(F_ALT),  KC_LGUI,                KC_SPC,                                KC_RGUI,      KC_RALT,  KC_RCTL,  MO(_AL)),
 
@@ -229,3 +229,61 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
   }
   return MACRO_NONE;
 };
+
+LEADER_EXTERNS();
+
+void matrix_scan_user(void) {
+  LEADER_DICTIONARY() {
+    leading = false;
+    leader_end();
+
+    /* `c` activates cursor layer */
+    SEQ_ONE_KEY(KC_C) {
+      layer_on(_AL);
+    }
+    /* `d` shows desktop */
+    SEQ_ONE_KEY(KC_D) {
+      register_code(KC_F11);
+      unregister_code(KC_F11);
+    }
+    /* `e` launches exposé and enters mouse layer */
+    SEQ_ONE_KEY(KC_E) {
+      register_code(KC_LCTL);
+      register_code(KC_UP);
+      unregister_code(KC_UP);
+      unregister_code(KC_LCTL);
+      layer_on(_ML);
+    }
+    /* `l` locks screen */
+    SEQ_ONE_KEY(KC_L) {
+      register_code(KC_LCTL);
+      register_code(KC_LSFT);
+      register_code(KC_MEDIA_EJECT);
+      unregister_code(KC_LCTL);
+      unregister_code(KC_LSFT);
+      unregister_code(KC_MEDIA_EJECT);
+    }
+    /* `m` activates mouse and media layer */
+    SEQ_ONE_KEY(KC_M) {
+      layer_on(_ML);
+    }
+    /* `s` saves screenshot */
+    SEQ_ONE_KEY(KC_S) {
+      register_code(KC_LGUI);
+      register_code(KC_LSFT);
+      register_code(KC_3);
+      unregister_code(KC_LGUI);
+      unregister_code(KC_LSFT);
+      unregister_code(KC_3);
+    }
+    /* `ss` saves screenshot of selected area */
+    SEQ_TWO_KEYS(KC_S, KC_S) {
+      register_code(KC_LGUI);
+      register_code(KC_LSFT);
+      register_code(KC_4);
+      unregister_code(KC_LGUI);
+      unregister_code(KC_LSFT);
+      unregister_code(KC_4);
+    }
+  }
+}
