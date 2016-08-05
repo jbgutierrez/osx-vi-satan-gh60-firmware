@@ -22,7 +22,8 @@ Let's try a few tweaks!
 
 * [Layout](http://www.keyboard-layout-editor.com/#/gists/68883db060f32a591c0c847f7d6b33c7)
 
-* Honors ANSI layout with no modification whatsoever
+* Honors ANSI layout with no modification (with the exception of `Caps Lock`)
+* `Caps Lock` cycles through programs
 
 ### Arrow Layer
 
@@ -52,7 +53,7 @@ Let's try a few tweaks!
 
 ### Leader key sequences
 
-To make a better use of `CapsLock` this is remapped as the leader key. The following key sequences are provided:
+The following key sequences are provided:
 
 * `c` activates cursor layer
 * `d` shows desktop

@@ -17,7 +17,8 @@ enum function_id {
   F_BSE,
   F_SFT,
   F_ALT,
-  F_CTRL
+  F_CTRL,
+  F_CYCL,
 };
 
 enum macro_id {
@@ -56,19 +57,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |-----------------------------------------------------------|
    * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|  \  |
    * |-----------------------------------------------------------|
-   * |Leader |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return |
+   * |Gui/Alt|  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return |
    * |-----------------------------------------------------------|
    * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift     |
    * |-----------------------------------------------------------|
-   * |Ctrl|Alt |Gui |      Space            |Alt |Gui |FN  |Ctrl |
+   * |Ctrl|Alt |Gui |      Space            |Alt |Gui |Ctrl|Lead |
    * `-----------------------------------------------------------'
    */
 [_BL] = KEYMAP(
   F(0),       KC_1,      KC_2,     KC_3,  KC_4,  KC_5,   KC_6,  KC_7,  KC_8,  KC_9,     KC_0,         KC_MINS,  KC_EQL,   KC_BSPC, \
   KC_TAB,     KC_Q,      KC_W,     KC_E,  KC_R,  KC_T,   KC_Y,  KC_U,  KC_I,  KC_O,     KC_P,         KC_LBRC,  KC_RBRC,  KC_BSLS, \
-  KC_LEAD,    KC_A,      KC_S,     KC_D,  KC_F,  KC_G,   KC_H,  KC_J,  KC_K,  KC_L,     TD(TD_SCLN),  KC_QUOT,            KC_ENT,  \
+  F(F_CYCL),  KC_A,      KC_S,     KC_D,  KC_F,  KC_G,   KC_H,  KC_J,  KC_K,  KC_L,     TD(TD_SCLN),  KC_QUOT,            KC_ENT,  \
   F(F_SFT),              KC_Z,     KC_X,  KC_C,  KC_V,   KC_B,  KC_N,  KC_M,  KC_COMM,  KC_DOT,       KC_SLSH,            KC_RSFT, \
-  F(F_CTRL),  F(F_ALT),  KC_LGUI,                KC_SPC,                                KC_RGUI,      KC_RALT,  KC_RCTL,  MO(_AL)),
+  F(F_CTRL),  F(F_ALT),  KC_LGUI,                KC_SPC,                                KC_RGUI,      KC_RALT,  KC_RCTL,  KC_LEAD),
 
 /* Keymap _AL: Arrow Layer
    * ,-----------------------------------------------------------.
@@ -121,6 +122,7 @@ const uint16_t PROGMEM fn_actions[] = {
   [F_SFT]  = ACTION_MODS_ONESHOT(MOD_LSFT),
   [F_ALT]  = ACTION_MODS_ONESHOT(MOD_LALT),
   [F_CTRL] = ACTION_MODS_ONESHOT(MOD_LCTL),
+  [F_CYCL] = ACTION_MODS_KEY(MOD_LALT, KC_TAB),
 };
 
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
