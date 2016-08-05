@@ -43,6 +43,10 @@ enum macro_id {
   KF_11, // =, F11
 };
 
+enum enum_id {
+  TD_SCLN = 0
+};
+
 uint16_t kf_timers[12];
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -60,11 +64,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * `-----------------------------------------------------------'
    */
 [_BL] = KEYMAP(
-  F(0),       KC_1,      KC_2,     KC_3,  KC_4,  KC_5,   KC_6,  KC_7,  KC_8,  KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC, \
-  KC_TAB,     KC_Q,      KC_W,     KC_E,  KC_R,  KC_T,   KC_Y,  KC_U,  KC_I,  KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS, \
-  KC_CAPS,    KC_A,      KC_S,     KC_D,  KC_F,  KC_G,   KC_H,  KC_J,  KC_K,  KC_L,     KC_SCLN,  KC_QUOT,            KC_ENT,  \
-  F(F_SFT),              KC_Z,     KC_X,  KC_C,  KC_V,   KC_B,  KC_N,  KC_M,  KC_COMM,  KC_DOT,   KC_SLSH,            KC_RSFT, \
-  F(F_CTRL),  F(F_ALT),  KC_LGUI,                KC_SPC,                                KC_RGUI,  KC_RALT,  KC_RCTL,  MO(_AL)),
+  F(0),       KC_1,      KC_2,     KC_3,  KC_4,  KC_5,   KC_6,  KC_7,  KC_8,  KC_9,     KC_0,         KC_MINS,  KC_EQL,   KC_BSPC, \
+  KC_TAB,     KC_Q,      KC_W,     KC_E,  KC_R,  KC_T,   KC_Y,  KC_U,  KC_I,  KC_O,     KC_P,         KC_LBRC,  KC_RBRC,  KC_BSLS, \
+  KC_CAPS,    KC_A,      KC_S,     KC_D,  KC_F,  KC_G,   KC_H,  KC_J,  KC_K,  KC_L,     TD(TD_SCLN),  KC_QUOT,            KC_ENT,  \
+  F(F_SFT),              KC_Z,     KC_X,  KC_C,  KC_V,   KC_B,  KC_N,  KC_M,  KC_COMM,  KC_DOT,       KC_SLSH,            KC_RSFT, \
+  F(F_CTRL),  F(F_ALT),  KC_LGUI,                KC_SPC,                                KC_RGUI,      KC_RALT,  KC_RCTL,  MO(_AL)),
 
 /* Keymap _AL: Arrow Layer
    * ,-----------------------------------------------------------.
@@ -105,6 +109,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______ , _______, _______, KC_BTN1, KC_BTN2 , _______, _______, KC_MS_L,  _______,  KC_MS_R,  _______,  _______,          _______, \
   _______ ,          _______, _______, _______ , _______, _______, _______,  M(A_MDL), KC_MS_D,  M(A_MDR), _______,          _______, \
   _______ , _______, _______,                             KC_MPLY,                               _______,  _______, _______, _______),
+};
+
+const qk_tap_dance_action_t tap_dance_actions[] = {
+  [TD_SCLN]  = ACTION_TAP_DANCE_DOUBLE(KC_SCLN, S(KC_SCLN))
 };
 
 const uint16_t PROGMEM fn_actions[] = {

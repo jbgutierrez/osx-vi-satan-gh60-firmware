@@ -48,7 +48,7 @@ Let's try a few tweaks!
 
 * Shift, Alt, and Control modifiers are one-shot. When tapped, they are considered active for the immediate next key stroke. When double tapped, they toggle on, until a third, single tap sometime later. When held, they act as expected.
 
-* Tapping `:` key once yields `:`, tapping it twice yields `;`.
+* Tapping `;` key once yields `;`, tapping it twice yields `:`.
 
 ### Leader key sequences
 
