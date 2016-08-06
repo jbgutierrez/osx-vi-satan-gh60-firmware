@@ -269,6 +269,10 @@ void matrix_scan_user(void) {
     SEQ_ONE_KEY(KC_M) {
       layer_on(_ML);
     }
+    /* `p` types password */
+    PASSWORD_SEQUENCE {
+      SEND_STRING (PASSWORD);
+    }
     /* `s` saves screenshot */
     SEQ_ONE_KEY(KC_S) {
       register_code(KC_LGUI);
@@ -286,6 +290,10 @@ void matrix_scan_user(void) {
       unregister_code(KC_LGUI);
       unregister_code(KC_LSFT);
       unregister_code(KC_4);
+    }
+    /* `u` types username */
+    SEQ_ONE_KEY (KC_U) {
+      SEND_STRING (USERNAME);
     }
   }
 }

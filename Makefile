@@ -17,6 +17,10 @@ RGBLIGHT_ENABLE = no        # Enable WS2812 RGB underlight.  Do not enable this 
 SLEEP_LED_ENABLE = no       # Breathing sleep LED during USB suspend
 TAP_DANCE_ENABLE = yes      # Enables tap dancing
 
+ifeq ("$(wildcard secrets.h)","")
+  $(error Please, copy secrets.h.example to secrets.h and set your preferences)
+endif
+
 ifndef QUANTUM_DIR
-	include ../../../../Makefile
+  include ../../../../Makefile
 endif

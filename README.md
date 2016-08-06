@@ -60,10 +60,10 @@ The following key sequences are provided:
 * `e` launches exposé and enters mouse layer
 * `l` locks screen
 * `m` activates mouse and media layer
-* `p` types password. Actual key sequence and password won't be under version control :smirk:
+* `p` types password (see `secrets.h`)
 * `s` saves screenshot
 * `ss` saves screenshot of selected area
-* `u` types username
+* `u` types username (see `secrets.h`)
 
 ### Holding key actions
 
