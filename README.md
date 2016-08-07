@@ -39,17 +39,15 @@ Let's try a few tweaks!
 
 * Right and left click are conveniently placed at `d` and `f` keys to keep both hands at the home row while controlling your mouse. Diagonal mouse movements are also provided.
 
-* Media controls are placed in a position that resambles Apple's keyboard.
+* Media controls are placed in a position that resembles Apple's keyboard.
 
 * `esc` deactivates layer
 
 ## Opinionated enhancements
 
-### Tap-dancing keys
+### One-shot keys
 
 * Shift, Alt, and Control modifiers are one-shot. When tapped, they are considered active for the immediate next key stroke. When double tapped, they toggle on, until a third, single tap sometime later. When held, they act as expected.
-
-* Tapping `;` key once yields `;`, tapping it twice yields `:`.
 
 ### Leader key sequences
 
@@ -65,13 +63,13 @@ The following key sequences are provided:
 * `ss` saves screenshot of selected area
 * `u` types username (see `secrets.h`)
 
+### Tap-dancing keys
+
+* Tapping `;` key once yields `;`, tapping it twice yields `:`.
+
 ### Holding key actions
 
 * Keys on the number row double as function keys when held
-
-### One-shot keys
-
-* `` ` ``, `^` and `~` don't need to hit `space`
 
 ## Building
 
