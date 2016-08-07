@@ -149,6 +149,7 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
           send_keyboard_report();
         }
       }
+      clear_oneshot_mods();
       break;
     case F_HSFT:
       if (record->event.pressed) {
