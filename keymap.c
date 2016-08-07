@@ -3,7 +3,7 @@
 #include "action_tapping.h"
 
 
-// Used for SHIFT_ESC
+// Used for F_ESC
 #define MODS_CTRL_MASK  (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT))
 
 #define _BL 0
@@ -13,12 +13,13 @@
 #define _______ KC_TRNS
 
 enum function_id {
-  SHIFT_ESC = 0,
+  F_ESC = 0,
   F_BSE,
   F_SFT,
   F_ALT,
   F_CTRL,
   F_CYCL,
+  F_HSFT,
 };
 
 enum macro_id {
@@ -65,7 +66,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * `-----------------------------------------------------------'
    */
 [_BL] = KEYMAP(
-  F(0),       KC_1,      KC_2,     KC_3,  KC_4,  KC_5,   KC_6,  KC_7,  KC_8,  KC_9,     KC_0,         KC_MINS,  KC_EQL,   KC_BSPC, \
+  F(F_ESC),   KC_1,      KC_2,     KC_3,  KC_4,  KC_5,   KC_6,  KC_7,  KC_8,  KC_9,     KC_0,         KC_MINS,  KC_EQL,   KC_BSPC, \
   KC_TAB,     KC_Q,      KC_W,     KC_E,  KC_R,  KC_T,   KC_Y,  KC_U,  KC_I,  KC_O,     KC_P,         KC_LBRC,  KC_RBRC,  KC_BSLS, \
   F(F_CYCL),  KC_A,      KC_S,     KC_D,  KC_F,  KC_G,   KC_H,  KC_J,  KC_K,  KC_L,     TD(TD_SCLN),  KC_QUOT,            KC_ENT,  \
   F(F_SFT),              KC_Z,     KC_X,  KC_C,  KC_V,   KC_B,  KC_N,  KC_M,  KC_COMM,  KC_DOT,       KC_SLSH,            KC_RSFT, \
@@ -85,11 +86,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * `-----------------------------------------------------------'
    */
 [_AL] = KEYMAP(
-  F(F_BSE), _______, _______,       _______, KC_END,  _______, _______,       _______,  _______, _______, KC_HOME, _______, _______, KC_BSPC, \
-  _______ , _______, LALT(KC_RGHT), KC_END,  _______, _______, _______,       KC_PGUP,  KC_INS,  _______, KC_PAST, _______, _______, _______, \
-  _______ , _______, KC_HOME,       KC_PGDN, _______, _______, KC_LEFT,       KC_DOWN,  KC_UP,   KC_RGHT, _______, _______,          _______, \
-  _______ ,          _______,       KC_DEL,  _______, KC_CAPS, LALT(KC_RGHT), _______,  _______, _______, _______, _______,          _______, \
-  _______ , _______, _______,                                  _______,                                   _______, _______, _______, _______),
+  F(F_BSE), _______, _______,       _______, KC_END,  _______,   _______,       _______,  _______, _______, KC_HOME, _______, _______, KC_BSPC, \
+  _______ , _______, LALT(KC_RGHT), KC_END,  _______, _______,   _______,       KC_PGUP,  KC_INS,  _______, KC_PAST, _______, _______, _______, \
+  _______ , _______, KC_HOME,       KC_PGDN, _______, _______,   KC_LEFT,       KC_DOWN,  KC_UP,   KC_RGHT, _______, _______,          _______, \
+  _______ ,          _______,       KC_DEL,  _______, F(F_HSFT), LALT(KC_RGHT), _______,  _______, _______, _______, _______,          _______, \
+  _______ , _______, _______,                                    _______,                                   _______, _______, _______, _______),
 
   /* Keymap _ML: Media and Mouse Layer
    * ,-----------------------------------------------------------.
@@ -117,21 +118,22 @@ const qk_tap_dance_action_t tap_dance_actions[] = {
 };
 
 const uint16_t PROGMEM fn_actions[] = {
-  [0]      = ACTION_FUNCTION(SHIFT_ESC),
+  [F_ESC]  = ACTION_FUNCTION(F_ESC),
   [F_BSE]  = ACTION_LAYER_CLEAR(ON_PRESS),
   [F_SFT]  = ACTION_MODS_ONESHOT(MOD_LSFT),
   [F_ALT]  = ACTION_MODS_ONESHOT(MOD_LALT),
   [F_CTRL] = ACTION_MODS_ONESHOT(MOD_LCTL),
   [F_CYCL] = ACTION_MODS_KEY(MOD_LALT, KC_TAB),
+  [F_HSFT] = ACTION_FUNCTION(F_HSFT),
 };
 
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
-  static uint8_t shift_esc_shift_mask;
+  static uint8_t f_esc_shift_mask;
   switch (id) {
-    case SHIFT_ESC:
-      shift_esc_shift_mask = get_mods()&MODS_CTRL_MASK;
+    case F_ESC:
+      f_esc_shift_mask = get_mods()&MODS_CTRL_MASK;
       if (record->event.pressed) {
-        if (shift_esc_shift_mask) {
+        if (f_esc_shift_mask) {
           add_key(KC_GRV);
           send_keyboard_report();
         } else {
@@ -139,12 +141,21 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
           send_keyboard_report();
         }
       } else {
-        if (shift_esc_shift_mask) {
+        if (f_esc_shift_mask) {
           del_key(KC_GRV);
           send_keyboard_report();
         } else {
           del_key(KC_ESC);
           send_keyboard_report();
+        }
+      }
+      break;
+    case F_HSFT:
+      if (record->event.pressed) {
+        if (keyboard_report->mods & MOD_BIT (KC_LSFT)) {
+          unregister_code(KC_LSFT);
+        } else {
+          register_code(KC_LSFT);
         }
       }
       break;
