@@ -2,10 +2,6 @@
 #include "mousekey.h"
 #include "action_tapping.h"
 
-
-// Used for F_ESC
-#define MODS_CTRL_MASK  (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT))
-
 #define _BL 0
 #define _AL 1
 #define _ML 2
@@ -137,7 +133,7 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
   static uint8_t f_esc_shift_mask;
   switch (id) {
     case F_ESC:
-      f_esc_shift_mask = get_mods()&MODS_CTRL_MASK;
+      f_esc_shift_mask = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
       if (record->event.pressed) {
         if (f_esc_shift_mask) {
           add_key(KC_GRV);
@@ -159,7 +155,7 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
       break;
     case F_HSFT:
       if (record->event.pressed) {
-        if (keyboard_report->mods & MOD_BIT (KC_LSFT)) {
+        if (keyboard_report->mods & MOD_BIT(KC_LSFT)) {
           unregister_code(KC_LSFT);
         } else {
           register_code(KC_LSFT);
@@ -169,7 +165,7 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
   }
 }
 
-void ang_handle_kf(keyrecord_t *record, uint8_t id) {
+const macro_t *ang_handle_kf(keyrecord_t *record, uint8_t id) {
   uint8_t code = id - KF_1;
 
   if (record->event.pressed) {
@@ -190,62 +186,31 @@ void ang_handle_kf(keyrecord_t *record, uint8_t id) {
     register_code(kc);
     unregister_code(kc);
   }
+  return MACRO_NONE;
 }
 
-const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt)
-{
+const macro_t *handle_diagonal_mouse(keyrecord_t *record, uint16_t vertical, uint16_t horizontal) {
+  if (record->event.pressed) {
+    mousekey_on(vertical);
+    mousekey_on(horizontal);
+  } else {
+    mousekey_off(vertical);
+    mousekey_off(horizontal);
+  }
+  mousekey_send();
+  return MACRO_NONE;
+}
+
+const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
   switch(id) {
-    case 0:
-      return MACRODOWN(TYPE(KC_RSFT), END);
-      break;
+    case 0: return MACRODOWN(TYPE(KC_RSFT), END);
 
-    case A_MUL:
-      if (record->event.pressed) {
-        mousekey_on(KC_MS_UP);
-        mousekey_on(KC_MS_LEFT);
-      } else {
-        mousekey_off(KC_MS_UP);
-        mousekey_off(KC_MS_LEFT);
-      }
-      mousekey_send();
-      break;
+    case A_MUL: return handle_diagonal_mouse(record, KC_MS_UP,   KC_MS_LEFT);
+    case A_MUR: return handle_diagonal_mouse(record, KC_MS_UP,   KC_MS_RIGHT);
+    case A_MDL: return handle_diagonal_mouse(record, KC_MS_DOWN, KC_MS_LEFT);
+    case A_MDR: return handle_diagonal_mouse(record, KC_MS_DOWN, KC_MS_RIGHT);
 
-    case A_MUR:
-      if (record->event.pressed) {
-        mousekey_on(KC_MS_UP);
-        mousekey_on(KC_MS_RIGHT);
-      } else {
-        mousekey_off(KC_MS_UP);
-        mousekey_off(KC_MS_RIGHT);
-      }
-      mousekey_send();
-      break;
-
-    case A_MDL:
-      if (record->event.pressed) {
-        mousekey_on(KC_MS_DOWN);
-        mousekey_on(KC_MS_LEFT);
-      } else {
-        mousekey_off(KC_MS_DOWN);
-        mousekey_off(KC_MS_LEFT);
-      }
-      mousekey_send();
-      break;
-
-    case A_MDR:
-      if (record->event.pressed) {
-        mousekey_on(KC_MS_DOWN);
-        mousekey_on(KC_MS_RIGHT);
-      } else {
-        mousekey_off(KC_MS_DOWN);
-        mousekey_off(KC_MS_RIGHT);
-      }
-      mousekey_send();
-      break;
-
-    case KF_1 ... KF_11:
-      ang_handle_kf(record, id);
-      break;
+    case KF_1 ... KF_11: return ang_handle_kf(record, id);
   }
   return MACRO_NONE;
 };
