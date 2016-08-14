@@ -11,6 +11,12 @@
 #define _ML 2
 
 #define _______ KC_TRNS
+#define CK_PASTE LGUI(KC_V)
+#define CK_COPY LGUI(KC_C)
+#define CK_CUT LGUI(KC_X)
+#define CK_UNDO LGUI(KC_Z)
+#define CK_WORD LALT(KC_RGHT)
+#define CK_BWORD LALT(KC_RGHT)
 
 enum function_id {
   F_ESC = 0,
@@ -86,11 +92,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * `-----------------------------------------------------------'
    */
 [_AL] = KEYMAP(
-  F(F_BSE), _______, _______,       _______, KC_END,  _______,   _______,       _______,  _______, _______, KC_HOME, _______, _______, KC_BSPC, \
-  _______ , _______, LALT(KC_RGHT), KC_END,  _______, _______,   _______,       KC_PGUP,  KC_INS,  _______, KC_PAST, _______, _______, _______, \
-  _______ , _______, KC_HOME,       KC_PGDN, _______, _______,   KC_LEFT,       KC_DOWN,  KC_UP,   KC_RGHT, _______, _______,          _______, \
-  _______ ,          _______,       KC_DEL,  _______, F(F_HSFT), LALT(KC_RGHT), _______,  _______, _______, _______, _______,          _______, \
-  _______ , _______, _______,                                    _______,                                   _______, _______, _______, _______),
+  F(F_BSE), _______, _______, _______, KC_END,  _______,   _______,   _______,  _______, _______, KC_HOME , _______, _______, KC_BSPC, \
+  _______ , _______, CK_WORD, KC_END,  _______, _______,   CK_COPY,   KC_PGUP,  KC_INS,  _______, CK_PASTE, _______, _______, _______, \
+  _______ , _______, _______, KC_HOME, KC_PGDN, _______,   _______,   KC_LEFT,  KC_DOWN, KC_UP,   KC_RGHT,  _______,          _______, \
+  _______ ,          CK_UNDO, KC_DEL,  CK_CUT , F(F_HSFT), CK_BWORD,  _______,  _______, _______, _______ , _______,          _______, \
+  _______ , _______, _______,                              _______,                               _______ , _______, _______, _______),
 
   /* Keymap _ML: Media and Mouse Layer
    * ,-----------------------------------------------------------.
