@@ -52,6 +52,7 @@ enum enum_id {
 };
 
 uint16_t kf_timers[12];
+uint16_t quote_timer = 0;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   /* Keymap _BL: (Base Layer) Default Layer
@@ -217,7 +218,39 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
 
 LEADER_EXTERNS();
 
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  if (record->event.pressed) {
+    if (quote_timer) {
+      quote_timer = 0;
+      switch (keycode) {
+        case KC_A:
+        case KC_E:
+        case KC_I:
+        case KC_O:
+        case KC_U:
+          register_code(KC_RALT);
+          register_code(KC_E);
+          unregister_code(KC_E);
+          unregister_code(KC_RALT);
+      }
+    } else {
+      if (keycode == KC_QUOT) {
+        quote_timer = timer_read();
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
 void matrix_scan_user(void) {
+  if (quote_timer && timer_elapsed(quote_timer) > TAPPING_TERM) {
+    quote_timer = 0;
+    register_code(KC_QUOT);
+    unregister_code(KC_QUOT);
+  }
+
   LEADER_DICTIONARY() {
     leading = false;
     leader_end();
