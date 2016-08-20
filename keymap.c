@@ -6,6 +6,7 @@
 #define _AL 1
 #define _ML 2
 #define _TM 3
+#define _WN 4
 
 #define _______ KC_TRNS
 #define CK_PASTE LGUI(KC_V)
@@ -21,8 +22,16 @@ enum function_id {
   F_SFT,
   F_ALT,
   F_CTRL,
-  F_CYCL,
   F_HSFT,
+
+  // Window
+  W_CENT,
+  W_DOWN,
+  W_LEFT,
+  W_MAX,
+  W_RGHT,
+  W_TOGGLE,
+  W_UP,
 };
 
 enum macro_id {
@@ -141,6 +150,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______ , /*      , */ M(T_RSZE) , _______ , _______  , _______ , _______   , M(T_NEXT)  , _______ , _______   , _______    , _______   , /*      , */_______   , \
     _______ , _______ , _______      , /*      ,          ,         ,           , */M(T_LAY) , /*      ,           , */ _______ , _______   , _______ , _______)    ,
 
+/* Keymap _WN: Windows Layer */
+[_WN] = KEYMAP(
+    _______ , _______ , _______    , _______ , _______   , _______ , _______   , _______   , _______  , _______     , _______    , _______ , _______ , _______   , \
+    _______ , _______ , _______    , _______ , _______   , _______ , _______   , _______   , _______  , F(W_TOGGLE) , _______    , _______ , _______ , _______   , \
+    _______ , _______ , _______    , KC_F11  , F(W_MAX)  , _______ , F(W_LEFT) , F(W_DOWN) , F(W_UP)  , F(W_RGHT)   , _______    , _______ , /*      , */_______ , \
+    _______ , /*      , */ _______ , _______ , F(W_CENT) , _______ , _______   , _______   , F(W_MAX) , _______     , _______    , _______ , /*      , */_______ , \
+    _______ , _______ , _______    , /*      ,           ,         ,           , */_______ , /*       ,             , */ _______ , _______ , _______ , _______)  ,
+
+
 const qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_SCLN]  = ACTION_TAP_DANCE_DOUBLE(KC_SCLN, S(KC_SCLN))
 };
@@ -151,8 +169,16 @@ const uint16_t PROGMEM fn_actions[] = {
   [F_SFT]  = ACTION_MODS_ONESHOT(MOD_LSFT),
   [F_ALT]  = ACTION_MODS_ONESHOT(MOD_LALT),
   [F_CTRL] = ACTION_MODS_ONESHOT(MOD_LCTL),
-  [F_CYCL] = ACTION_MODS_KEY(MOD_LALT, KC_TAB),
   [F_HSFT] = ACTION_FUNCTION(F_HSFT),
+
+  // Window
+  [W_CENT]   = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_C),
+  [W_DOWN]   = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_DOWN),
+  [W_LEFT]   = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_LEFT),
+  [W_MAX]    = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_F),
+  [W_RGHT]   = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_RGHT),
+  [W_TOGGLE] = ACTION_MODS_KEY(MOD_LGUI, KC_TAB),
+  [W_UP]     = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_UP),
 };
 
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
