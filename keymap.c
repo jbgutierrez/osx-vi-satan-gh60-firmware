@@ -5,6 +5,7 @@
 #define _BL 0
 #define _AL 1
 #define _ML 2
+#define _TM 3
 
 #define _______ KC_TRNS
 #define CK_PASTE LGUI(KC_V)
@@ -45,6 +46,22 @@ enum macro_id {
   KF_9,
   KF_10,
   KF_11, // =, F11
+
+  // TMUX
+  T_LEFT,
+  T_DOWN,
+  T_UP,
+  T_RGHT,
+  T_NEW,
+  T_REN,
+  T_CHSE,
+  T_RSZE,
+  T_SPLT,
+  T_RTE,
+  T_LAY,
+  T_COPY,
+  T_NEXT,
+  T_PREV,
 };
 
 enum enum_id {
@@ -115,6 +132,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______ ,          _______, _______, _______ , _______, _______, _______,  M(A_MDL), KC_MS_D,  M(A_MDR), _______,          _______, \
   _______ , _______, _______,                             KC_MPLY,                               _______,  _______, _______, _______),
 };
+
+/* Keymap _TM: TMUX Layer */
+[_TM] = KEYMAP(
+    _______ , _______ , _______      , _______ , M(T_NEW) , _______ , _______   , _______    , _______ , _______   , _______    , M(T_SPLT) , _______ , _______     , \
+    _______ , _______ , _______      , _______ , M(T_REN) , _______ , _______   , _______    , _______ , M(T_RTE)  , M(T_PREV)  , _______   , _______ , _______     , \
+    _______ , _______ , M(T_CHSE)    , _______ , _______  , _______ , M(T_LEFT) , M(T_DOWN)  , M(T_UP) , M(T_RGHT) , _______    , _______   , /*      , */M(T_COPY) , \
+    _______ , /*      , */ M(T_RSZE) , _______ , _______  , _______ , _______   , M(T_NEXT)  , _______ , _______   , _______    , _______   , /*      , */_______   , \
+    _______ , _______ , _______      , /*      ,          ,         ,           , */M(T_LAY) , /*      ,           , */ _______ , _______   , _______ , _______)    ,
 
 const qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_SCLN]  = ACTION_TAP_DANCE_DOUBLE(KC_SCLN, S(KC_SCLN))
@@ -212,6 +237,21 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
     case A_MDR: return handle_diagonal_mouse(record, KC_MS_DOWN, KC_MS_RIGHT);
 
     case KF_1 ... KF_11: return ang_handle_kf(record, id);
+
+    case T_LEFT:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(H), END);
+    case T_DOWN:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(J), END);
+    case T_UP:    return MACRODOWN(D(RCTL), T(B), U(RCTL), T(K), END);
+    case T_RGHT:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(L), END);
+    case T_REN:   return MACRODOWN(D(RCTL), T(B), U(RCTL), D(LSFT), T(4), END);
+    case T_NEW:   return MACRODOWN(D(RCTL), T(B), U(RCTL), D(LSFT), T(SCLN), U(LSFT), T(N), T(E), T(W), T(SPACE), T(MINS), T(S), T(SPACE), END);
+    case T_CHSE:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(S), END);
+    case T_PREV:  return MACRODOWN(D(RCTL), T(B), U(RCTL), D(LSFT), T(9), U(LSFT),  END);
+    case T_NEXT:  return MACRODOWN(D(RCTL), T(B), U(RCTL), D(LSFT), T(0), U(LSFT),  END);
+    case T_RSZE:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(Z), END);
+    case T_SPLT:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(MINS), END);
+    case T_RTE:   return MACRODOWN(D(RCTL), T(B), T(O), U(RCTL), END);
+    case T_LAY:   return MACRODOWN(D(RCTL), T(B), U(RCTL), T(SPACE), END);
+    case T_COPY:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(ENT), END);
   }
   return MACRO_NONE;
 };
