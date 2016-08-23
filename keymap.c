@@ -259,7 +259,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (quote_timer) {
       quote_timer = 0;
       switch (keycode) {
-        case KC_A:
+        case LT_A:
         case KC_E:
         case KC_I:
         case KC_O:
@@ -268,12 +268,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           register_code(KC_E);
           unregister_code(KC_E);
           unregister_code(KC_RALT);
+          break;
+        case KC_QUOT:
+          register_code(KC_QUOT);
+          unregister_code(KC_QUOT);
+          break;
       }
-    } else {
-      if (keycode == KC_QUOT) {
-        quote_timer = timer_read();
-        return false;
-      }
+    }
+    uint8_t f_esc_shift_mask = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
+    if (!f_esc_shift_mask && keycode == KC_QUOT) {
+      quote_timer = timer_read();
+      return false;
     }
   }
 
