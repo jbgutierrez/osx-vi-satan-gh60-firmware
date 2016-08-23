@@ -67,6 +67,9 @@ enum key_id {
 
   // Tap dancing definintions
   TD_SCLN,
+  TD_LBRC,
+  TD_RBRC,
+  TD_GRV,
 };
 
 uint16_t kf_timers[12];
@@ -134,8 +137,39 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,         , */ _______ , _______ , _______ , _______)  ,
 };
 
+#define TAP_ONCE(code) register_code (code); unregister_code (code)
+
+void shifted_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->count > 2) {
+    TAP_ONCE(KC_1);
+    state->count = 0;
+    return;
+  }
+
+  bool shifted = state->count == 2;
+  uint8_t kc;
+  switch(state->keycode) {
+    case TD(TD_SCLN) : kc = KC_SCLN; break;
+    case TD(TD_LBRC) : kc = KC_LBRC; break;
+    case TD(TD_RBRC) : kc = KC_RBRC; break;
+    case TD(TD_GRV)  : kc = KC_GRV; break;
+    default: return;
+  }
+
+  if (shifted) {
+    register_code (KC_RSFT);
+    TAP_ONCE(kc);
+    unregister_code (KC_RSFT);
+  } else {
+    TAP_ONCE(kc);
+  }
+}
+
 const qk_tap_dance_action_t tap_dance_actions[] = {
-  [TD_SCLN]  = ACTION_TAP_DANCE_DOUBLE(KC_SCLN, S(KC_SCLN)),
+  [TD_SCLN] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
+  [TD_LBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
+  [TD_RBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
+  [TD_GRV]  = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
 };
 
 const uint16_t PROGMEM fn_actions[] = {
