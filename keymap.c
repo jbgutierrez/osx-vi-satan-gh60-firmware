@@ -10,31 +10,40 @@
 #define _HW 5
 
 #define _______ KC_TRNS
-#define CK_PASTE LGUI(KC_V)
-#define CK_COPY LGUI(KC_C)
-#define CK_CUT LGUI(KC_X)
-#define CK_UNDO LGUI(KC_Z)
-#define CK_WORD LALT(KC_RGHT)
-#define CK_BWORD LALT(KC_LEFT)
+#define A_BWORD LALT(KC_LEFT)
+#define A_END LCTL(KC_E)
+#define A_FIND LGUI(KC_F)
+#define A_FNEXT LGUI(KC_G)
+#define A_PASTE LGUI(KC_V)
+#define A_START LCTL(KC_A)
+#define A_WORD LALT(KC_RGHT)
+
+#define W_CENT LGUI(LALT(KC_C))
+#define W_DOWN LGUI(LALT(KC_DOWN))
+#define W_LEFT LGUI(LALT(KC_LEFT))
+#define W_MAX LGUI(LALT(KC_F))
+#define W_RGHT LGUI(LALT(KC_RGHT))
+#define W_TOGGLE LGUI(KC_TAB)
+#define W_UP LGUI(LALT(KC_UP))
+#define W_NEXT LCAG(KC_RGHT)
+#define W_PREV LCAG(KC_LEFT)
+
+#define LT_A LT(_AR, KC_A)
+#define LT_SPC LT(_AR, KC_SPC)
+#define LT_TAB LT(_WN, KC_TAB)
+#define LT_GRV LT(_TM, KC_GRV)
 
 enum key_id {
   NONE = 0,
   L_BSE,
 
   F_LSFT,
+  F_LGUI,
   F_RSFT,
+  F_CAPS,
 
   // Arrow
-  C_VBLQ,
-
-  // Window
-  W_CENT,
-  W_DOWN,
-  W_LEFT,
-  W_MAX,
-  W_RGHT,
-  W_TOGGLE,
-  W_UP,
+  C_VMOD,
 
   // Function / number keys
   KF_1, // 1, F1
@@ -83,33 +92,33 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * |-----------------------------------------------------------|
    * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|  \  |
    * |-----------------------------------------------------------|
-   * |Esc    |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return |
+   * |EscCtrl|  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return |
    * |-----------------------------------------------------------|
    * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift     |
    * |-----------------------------------------------------------|
-   * |Ctrl|Art |Gui |      Space            |Gui |Art |Ctrl|Lead |
+   * |Ctrl|Alt |Gui |      Space            |Lead |Gui |Alt |Ctrl|
    * `-----------------------------------------------------------'
    */
 [_BA] = KEYMAP(
-  KC_GRV          , KC_1          , KC_2    , KC_3  , KC_4 , KC_5          , KC_6 , KC_7     , KC_8 , KC_9    , KC_0        , KC_MINS , KC_EQL    , KC_BSPC     , \
-  LT(_WN, KC_TAB) , KC_Q          , KC_W    , KC_E  , KC_R , LT(_TM, KC_T) , KC_Y , KC_U     , KC_I , KC_O    , KC_P        , KC_LBRC , KC_RBRC   , KC_BSLS     , \
-  LT(_MO, KC_ESC) , LT(_AR, KC_A) , KC_S    , KC_D  , KC_F , KC_G          , KC_H , KC_J     , KC_K , KC_L    , TD(TD_SCLN) , KC_QUOT , /*        , */KC_ENT    , \
-  F(F_LSFT)       , /*            , */KC_Z  , KC_X  , KC_C , KC_V          , KC_B , KC_N     , KC_M , KC_COMM , KC_DOT      , KC_SLSH , /*        , */F(F_RSFT) , \
-  KC_LCTL         , KC_LALT       , KC_LGUI , /*    ,      ,               ,      , */KC_SPC , /*   ,         , */ KC_RGUI  , KC_RALT , KC_RCTL   , KC_LEAD)    ,
+  TD(TD_GRV) , M(KF_1) , M(KF_2)   , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0)     , M(KF_MINS)  , M(KF_EQL)   , KC_BSPC     , \
+  LT_TAB     , KC_Q    , KC_W      , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P        , TD(TD_LBRC) , TD(TD_RBRC) , KC_BSLS     , \
+  F(F_CAPS)  , LT_A    , KC_S      , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , TD(TD_SCLN) , KC_QUOT     , /*          , */KC_ENT    , \
+  F(F_LSFT)  , /*      , */KC_Z    , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT      , KC_SLSH     , /*          , */F(F_RSFT) , \
+  KC_LCTL    , KC_LALT , F(F_LGUI) , /*      ,         ,         ,         , */LT_SPC , /*      ,         , */ KC_LEAD  , KC_RGUI     , KC_RALT     , KC_RCTL)    ,
 
 /* Keymap _AR: Arrow Layer */
 [_AR] = KEYMAP(
-  _______  , _______ , _______   , _______ , KC_END  , _______   , _______  , _______   , _______ , _______ , KC_HOME    , _______ , _______ , _______   , \
-  _______  , _______ , CK_WORD   , KC_END  , _______ , _______   , CK_COPY  , KC_PGUP   , KC_INS  , _______ , CK_PASTE   , _______ , _______ , _______   , \
-  F(L_BSE) , KC_HOME , _______   , KC_PGDN , _______ , _______   , KC_LEFT  , KC_DOWN   , KC_UP   , KC_RGHT , _______    , _______ , /*      , */_______ , \
-  _______  , /*      , */CK_UNDO , KC_DEL  , CK_CUT  , F(C_VBLQ) , CK_BWORD , _______   , _______ , _______ , _______    , _______ , /*      , */_______ , \
-  _______  , _______ , _______   , /*      ,         ,           ,          , */_______ , /*      ,         , */ _______ , _______ , _______ , _______)  ,
+  _______  , _______ , _______   , _______ , KC_END  , _______   , _______ , _______   , _______ , _______ , KC_HOME    , _______ , _______ , _______   , \
+  _______  , _______ , A_WORD    , A_END   , _______ , _______   , _______ , KC_PGUP   , KC_INS  , _______ , A_PASTE    , _______ , _______ , _______   , \
+  F(L_BSE) , _______ , A_START   , KC_PGDN , _______ , _______   , KC_LEFT , KC_DOWN   , KC_UP   , KC_RGHT , _______    , _______ , /*      , */_______ , \
+  _______  , /*      , */_______ , KC_DEL  , _______ , F(C_VMOD) , A_BWORD , A_FNEXT   , _______ , _______ , _______    , A_FIND  , /*      , */_______ , \
+  _______  , _______ , _______   , /*      ,         ,           ,         , */_______ , /*      ,         , */ _______ , _______ , _______ , _______)  ,
 
 /* Keymap _MO: Media and Mouse Layer */
 [_MO] = KEYMAP(
   _______  , KC_F14  , KC_F15     , _______ , _______ , _______ , _______ , KC_MPRV   , KC_MPLY , KC_MNXT , KC_MUTE    , KC_VOLD , KC_VOLU , _______    , \
   _______  , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , _______ , _______    , \
-  F(L_BSE) , _______ , _______    , KC_BTN1 , KC_BTN2 , _______ , KC_MS_L , KC_MS_U   , KC_MS_U , KC_MS_R , _______    , _______ , /*      , */ _______ , \
+  F(L_BSE) , _______ , _______    , KC_BTN1 , KC_BTN2 , _______ , KC_MS_L , KC_MS_D   , KC_MS_U , KC_MS_R , _______    , _______ , /*      , */ _______ , \
   _______  , /*      , */ _______ , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , /*      , */ _______ , \
   _______  , _______ , _______    , /*      ,         ,         ,         , */KC_MPLY , /*      ,         , */ _______ , _______ , _______ , _______)   ,
 
@@ -123,11 +132,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Keymap _WN: Windows Layer */
 [_WN] = KEYMAP(
-  _______ , _______ , _______    , _______ , _______   , _______ , _______   , _______     , _______  , _______     , _______    , _______ , _______ , _______   , \
-  _______ , _______ , _______    , _______ , _______   , _______ , _______   , _______     , _______  , F(W_TOGGLE) , _______    , _______ , _______ , _______   , \
-  F(L_BSE), _______ , _______    , KC_F11  , F(W_MAX)  , _______ , F(W_LEFT) , F(W_DOWN)   , F(W_UP)  , F(W_RGHT)   , _______    , _______ , /*      , */_______ , \
-  _______ , /*      , */ _______ , _______ , F(W_CENT) , _______ , _______   , F(W_TOGGLE) , F(W_MAX) , _______     , _______    , _______ , /*      , */_______ , \
-  _______ , _______ , _______    , /*      ,           ,         ,           , */_______   , /*       ,             , */ _______ , _______ , _______ , _______)  ,
+  _______  , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______  , _______    , _______ , _______ , _______   , \
+  _______  , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , W_TOGGLE , W_PREV     , _______ , _______ , _______   , \
+  F(L_BSE) , _______ , _______    , KC_F11  , W_MAX   , _______ , W_LEFT  , W_DOWN    , W_UP    , W_RGHT   , _______    , _______ , /*      , */_______ , \
+  _______  , /*      , */ _______ , _______ , W_CENT  , _______ , _______ , W_NEXT    , _______ , _______  , _______    , _______ , /*      , */_______ , \
+  _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,          , */ _______ , _______ , _______ , _______)  ,
 
 /* Keymap _HW: Hardware Layer */
 [_HW] = KEYMAP(
@@ -176,23 +185,16 @@ const qk_tap_dance_action_t tap_dance_actions[] = {
 const uint16_t PROGMEM fn_actions[] = {
   [L_BSE]  = ACTION_LAYER_CLEAR(ON_PRESS),
 
+  [F_CAPS] = ACTION_MODS_TAP_KEY(MOD_LCTL, KC_ESC),
   [F_LSFT] = ACTION_MODS_ONESHOT(MOD_LSFT),
+  [F_LGUI] = ACTION_MODS_TAP_KEY(MOD_LGUI, KC_PAST),
   [F_RSFT] = ACTION_MODS_ONESHOT(MOD_RSFT),
-  [C_VBLQ] = ACTION_FUNCTION(C_VBLQ),
-
-  // Window
-  [W_CENT]   = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_C),
-  [W_DOWN]   = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_DOWN),
-  [W_LEFT]   = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_LEFT),
-  [W_MAX]    = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_F),
-  [W_RGHT]   = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_RGHT),
-  [W_TOGGLE] = ACTION_MODS_KEY(MOD_LGUI, KC_TAB),
-  [W_UP]     = ACTION_MODS_KEY(MOD_LGUI | MOD_LALT, KC_UP),
+  [C_VMOD] = ACTION_FUNCTION(C_VMOD),
 };
 
 void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
   switch (id) {
-    case C_VBLQ:
+    case C_VMOD:
       if (record->event.pressed) {
         if (keyboard_report->mods & MOD_BIT(KC_LSFT)) {
           unregister_code(KC_LSFT);
