@@ -46,8 +46,9 @@ enum key_id {
   KF_7,
   KF_8,
   KF_9,
-  KF_10,
-  KF_11, // =, F11
+  KF_0,
+  KF_MINS,
+  KF_EQL, // =, F12
 
   // TMUX
   T_LEFT,
@@ -215,10 +216,11 @@ const macro_t *ang_handle_kf(keyrecord_t *record, uint8_t id) {
       // Long press
       kc = KC_F1 + code;
     } else {
-      if (id == KF_11)
-        kc = KC_EQL;
-      else
-        kc = KC_1 + code;
+      switch(id) {
+        case KF_EQL: kc = KC_EQL; break;
+        case KF_MINS: kc = KC_MINS; break;
+        default: kc = KC_1 + code; break;
+      }
     }
 
     register_code(kc);
@@ -232,7 +234,7 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
   switch(id) {
     case 0: return MACRODOWN(TYPE(KC_RSFT), END);
 
-    case KF_1 ... KF_11: return ang_handle_kf(record, id);
+    case KF_1 ... KF_EQL: return ang_handle_kf(record, id);
 
     case T_LEFT:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(H), END);
     case T_DOWN:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(J), END);
