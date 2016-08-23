@@ -289,11 +289,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
+uint8_t layer_was;
 void matrix_scan_user(void) {
   if (quote_timer && timer_elapsed(quote_timer) > TAPPING_TERM) {
     quote_timer = 0;
     register_code(KC_QUOT);
     unregister_code(KC_QUOT);
+  }
+
+  uint8_t layer = biton32(layer_state);
+  if (layer != layer_was) {
+    clear_keyboard();
+    layer_was = layer;
   }
 
   LEADER_DICTIONARY() {
