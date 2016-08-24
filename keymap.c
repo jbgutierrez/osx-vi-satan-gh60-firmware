@@ -205,11 +205,25 @@ void on_caps_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
+void on_grv_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->pressed) {
+    layer_on(_TM);
+  } else {
+    shifted_tap_dance_fn(state, user_data);
+  }
+}
+
+void on_grv_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->pressed) {
+    layer_off(_TM);
+  }
+}
+
 const qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_SCLN] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
   [TD_LBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
   [TD_RBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
-  [TD_GRV]  = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
+  [TD_GRV]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_grv_tap_dance_finished_fn, on_grv_tap_dance_reset_fn),
   [TD_CAPS] = {
     .fn = { NULL, on_caps_tap_dance_finished_fn, on_caps_tap_dance_reset_fn },
     .user_data = (void *)&((caps_state) { false }),
