@@ -10,6 +10,9 @@
 #define _HW 5
 
 #define _______ KC_TRNS
+
+#define B_LGUI GUI_T(KC_PAST)
+
 #define A_BWORD LALT(KC_LEFT)
 #define A_END LCTL(KC_E)
 #define A_FIND LGUI(KC_F)
@@ -38,9 +41,7 @@ enum key_id {
   L_BSE,
 
   F_LSFT,
-  F_LGUI,
   F_RSFT,
-  F_CAPS,
 
   // Arrow
   C_VMOD,
@@ -80,6 +81,7 @@ enum key_id {
   TD_LBRC,
   TD_RBRC,
   TD_GRV,
+  TD_CAPS,
 };
 
 uint16_t kf_timers[12];
@@ -100,11 +102,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
    * `-----------------------------------------------------------'
    */
 [_BA] = KEYMAP(
-  TD(TD_GRV) , M(KF_1) , M(KF_2)   , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0)     , M(KF_MINS)  , M(KF_EQL)   , KC_BSPC     , \
-  LT_TAB     , KC_Q    , KC_W      , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P        , TD(TD_LBRC) , TD(TD_RBRC) , KC_BSLS     , \
-  F(F_CAPS)  , LT_A    , KC_S      , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , TD(TD_SCLN) , KC_QUOT     , /*          , */KC_ENT    , \
-  F(F_LSFT)  , /*      , */KC_Z    , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT      , KC_SLSH     , /*          , */F(F_RSFT) , \
-  KC_LCTL    , KC_LALT , F(F_LGUI) , /*      ,         ,         ,         , */LT_SPC , /*      ,         , */ KC_LEAD  , KC_RGUI     , KC_RALT     , KC_RCTL)    ,
+  TD(TD_GRV)  , M(KF_1) , M(KF_2) , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0)     , M(KF_MINS)  , M(KF_EQL)   , KC_BSPC     , \
+  LT_TAB      , KC_Q    , KC_W    , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P        , TD(TD_LBRC) , TD(TD_RBRC) , KC_BSLS     , \
+  TD(TD_CAPS) , LT_A    , KC_S    , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , TD(TD_SCLN) , KC_QUOT     , /*          , */KC_ENT    , \
+  F(F_LSFT)   , /*      , */KC_Z  , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT      , KC_SLSH     , /*          , */F(F_RSFT) , \
+  KC_LCTL     , KC_LALT , B_LGUI  , /*      ,         ,         ,         , */LT_SPC , /*      ,         , */ KC_LEAD  , KC_RGUI     , KC_RALT     , KC_RCTL)    ,
 
 /* Keymap _AR: Arrow Layer */
 [_AR] = KEYMAP(
@@ -150,12 +152,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #define TAP_ONCE(code) register_code (code); unregister_code (code)
 
 void shifted_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->count > 2) {
-    TAP_ONCE(KC_1);
-    state->count = 0;
-    return;
-  }
-
   bool shifted = state->count == 2;
   uint8_t kc;
   switch(state->keycode) {
@@ -173,6 +169,40 @@ void shifted_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
   } else {
     TAP_ONCE(kc);
   }
+};
+
+typedef struct {
+  bool locked;
+} caps_state;
+
+void on_caps_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
+  caps_state *caps = (caps_state *) user_data;
+
+  if (caps->locked || (!state->pressed && state->count > 1)) {
+    register_code(KC_CAPS);
+  } else {
+    if (state->pressed) {
+      register_code(KC_RCTL);
+    } else {
+      register_code(KC_ESC);
+    }
+  }
+}
+
+void on_caps_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
+  caps_state *caps = (caps_state *) user_data;
+
+  if (caps->locked || (!state->pressed && state->count > 1)) {
+    unregister_code(KC_CAPS);
+    caps->locked = !caps->locked;
+  } else {
+    if (state->pressed) {
+      unregister_code(KC_RCTL);
+    } else {
+      unregister_code(KC_ESC);
+      clear_keyboard();
+    }
+  }
 }
 
 const qk_tap_dance_action_t tap_dance_actions[] = {
@@ -180,14 +210,16 @@ const qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_LBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
   [TD_RBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
   [TD_GRV]  = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
+  [TD_CAPS] = {
+    .fn = { NULL, on_caps_tap_dance_finished_fn, on_caps_tap_dance_reset_fn },
+    .user_data = (void *)&((caps_state) { false }),
+  },
 };
 
 const uint16_t PROGMEM fn_actions[] = {
   [L_BSE]  = ACTION_LAYER_CLEAR(ON_PRESS),
 
-  [F_CAPS] = ACTION_MODS_TAP_KEY(MOD_LCTL, KC_ESC),
   [F_LSFT] = ACTION_MODS_ONESHOT(MOD_LSFT),
-  [F_LGUI] = ACTION_MODS_TAP_KEY(MOD_LGUI, KC_PAST),
   [F_RSFT] = ACTION_MODS_ONESHOT(MOD_RSFT),
   [C_VMOD] = ACTION_FUNCTION(C_VMOD),
 };
