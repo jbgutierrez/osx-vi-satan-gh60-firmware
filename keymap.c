@@ -8,6 +8,7 @@
 #define _TM 3
 #define _WN 4
 #define _HW 5
+#define _SY 6
 
 #define _______ KC_TRNS
 
@@ -82,10 +83,13 @@ enum key_id {
   TD_RBRC,
   TD_GRV,
   TD_CAPS,
+  TD_LCTL,
 };
 
 uint16_t kf_timers[12];
 uint16_t quote_timer = 0;
+bool oneshot_symbol = false;
+
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   /* Keymap _BA: (Base Layer) Default Layer
@@ -139,6 +143,26 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   F(L_BSE) , _______ , _______    , KC_F11  , W_MAX   , _______ , W_LEFT  , W_DOWN    , W_UP    , W_RGHT   , _______    , _______ , /*      , */_______ , \
   _______  , /*      , */ _______ , _______ , W_CENT  , _______ , _______ , W_NEXT    , _______ , _______  , _______    , _______ , /*      , */_______ , \
   _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,          , */ _______ , _______ , _______ , _______)  ,
+
+/* Keymap _SY: Symbols Layer
+ * ,-----------------------------------------------------------.
+ * |   ~| !|  @|  #|  $|  %|  ^|  &|  8|  (|  )|  _|  +|       |
+ * |-----------------------------------------------------------|
+ * |     |  ?|   |  =|   |   |  %|   |  _|  ||  +|  ]|   |     |
+ * |-----------------------------------------------------------|
+ * |       |  &|  $|  {|  (|   |  #|  )|  }|   |  :|  '|       |
+ * |-----------------------------------------------------------|
+ * |        |   |   |  ^|   |  \|  !|  -|  <|  >|  ?|          |
+ * |-----------------------------------------------------------|
+ * |    |    |    |                      *|     |    |    |    |
+ * `-----------------------------------------------------------'
+ */
+[_SY] = KEYMAP_ANSI(
+  KC_TILD  , KC_EXLM , KC_AT      , KC_HASH  , KC_DLR  , KC_PERC , KC_CIRC , KC_AMPR   , KC_ASTR , KC_LPRN , KC_RPRN    , KC_UNDS , KC_PLUS , KC_DEL    , \
+  _______  , KC_QUES , _______    , KC_EQUAL , _______ , _______ , KC_PERC , KC_UNDS   , _______ , KC_PIPE , KC_PLUS    , KC_RBRC , _______ , _______   , \
+  F(L_BSE) , KC_AMPR , KC_DLR     , KC_LCBR  , KC_LPRN , _______ , KC_HASH , KC_RPRN   , KC_RCBR , _______ , KC_COLN    , KC_DQUO , /*      , */_______ , \
+  _______  , /*      , */ _______ , _______  , KC_CIRC , _______ , KC_BSLS , KC_EXLM   , KC_MINS , KC_LABK , KC_RABK    , KC_QUES , /*      , */_______ , \
+  F(L_BSE) , _______ , _______    , /*       ,         ,         ,         , */KC_PAST , /*      ,         , */ _______ , _______ , _______ , _______)  ,
 
 /* Keymap _HW: Hardware Layer */
 [_HW] = KEYMAP_ANSI(
@@ -205,6 +229,19 @@ void on_caps_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
   }
 }
 
+void on_lctl_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->pressed) {
+    register_code(KC_LCTL);
+  } else {
+    layer_on(_SY);
+    oneshot_symbol = true;
+  }
+}
+
+void on_lctl_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
+  unregister_code(KC_LCTL);
+}
+
 void on_grv_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
   if (state->pressed) {
     layer_on(_TM);
@@ -224,6 +261,7 @@ const qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_LBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
   [TD_RBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
   [TD_GRV]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_grv_tap_dance_finished_fn, on_grv_tap_dance_reset_fn),
+  [TD_LCTL]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_lctl_tap_dance_finished_fn, on_lctl_tap_dance_reset_fn),
   [TD_CAPS] = {
     .fn = { NULL, on_caps_tap_dance_finished_fn, on_caps_tap_dance_reset_fn },
     .user_data = (void *)&((caps_state) { false }),
@@ -329,6 +367,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (!f_esc_shift_mask && keycode == KC_QUOT) {
       quote_timer = timer_read();
       return false;
+    }
+  } else {
+    if (oneshot_symbol) {
+      layer_off(_SY);
+      oneshot_symbol = false;
     }
   }
 
