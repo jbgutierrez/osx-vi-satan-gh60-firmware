@@ -5,10 +5,9 @@
 #define _BA 0
 #define _AR 1
 #define _MO 2
-#define _TM 3
-#define _WN 4
-#define _HW 5
-#define _SY 6
+#define _WN 3
+#define _HW 4
+#define _SY 5
 
 #define _______ KC_TRNS
 
@@ -61,22 +60,6 @@ enum key_id {
   KF_MINS,
   KF_EQL, // =, F12
 
-  // TMUX
-  T_LEFT,
-  T_DOWN,
-  T_UP,
-  T_RGHT,
-  T_NEW,
-  T_REN,
-  T_CHSE,
-  T_RSZE,
-  T_SPLT,
-  T_RTE,
-  T_LAY,
-  T_COPY,
-  T_NEXT,
-  T_PREV,
-
   // Tap dancing definintions
   TD_SCLN,
   TD_LBRC,
@@ -127,14 +110,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   F(L_BSE) , _______ , _______    , KC_BTN1 , KC_BTN2 , _______ , KC_MS_L , KC_MS_D   , KC_MS_U , KC_MS_R , _______    , _______ , /*      , */ _______ , \
   _______  , /*      , */ _______ , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , /*      , */ _______ , \
   _______  , _______ , _______    , /*      ,         ,         ,         , */KC_MPLY , /*      ,         , */ _______ , _______ , _______ , _______)   ,
-
-/* Keymap _TM: TMUX Layer */
-[_TM] = KEYMAP_ANSI(
-  _______ , _______ , _______      , _______ , M(T_NEW) , _______ , _______   , _______    , _______ , _______   , _______    , M(T_SPLT) , _______ , _______     , \
-  _______ , _______ , _______      , _______ , M(T_REN) , _______ , _______   , _______    , _______ , M(T_RTE)  , M(T_PREV)  , _______   , _______ , _______     , \
-  F(L_BSE), _______ , M(T_CHSE)    , _______ , _______  , _______ , M(T_LEFT) , M(T_DOWN)  , M(T_UP) , M(T_RGHT) , _______    , _______   , /*      , */M(T_COPY) , \
-  _______ , /*      , */ M(T_RSZE) , _______ , _______  , _______ , _______   , M(T_NEXT)  , _______ , _______   , _______    , _______   , /*      , */_______   , \
-  _______ , _______ , _______      , /*      ,          ,         ,           , */M(T_LAY) , /*      ,           , */ _______ , _______   , _______ , _______)    ,
 
 /* Keymap _WN: Windows Layer */
 [_WN] = KEYMAP_ANSI(
@@ -315,27 +290,11 @@ const macro_t *ang_handle_kf(keyrecord_t *record, uint8_t id) {
   return MACRO_NONE;
 }
 
-
 const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
   switch(id) {
     case 0: return MACRODOWN(TYPE(KC_RSFT), END);
 
     case KF_1 ... KF_EQL: return ang_handle_kf(record, id);
-
-    case T_LEFT:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(H), END);
-    case T_DOWN:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(J), END);
-    case T_UP:    return MACRODOWN(D(RCTL), T(B), U(RCTL), T(K), END);
-    case T_RGHT:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(L), END);
-    case T_REN:   return MACRODOWN(D(RCTL), T(B), U(RCTL), D(LSFT), T(4), END);
-    case T_NEW:   return MACRODOWN(D(RCTL), T(B), U(RCTL), D(LSFT), T(SCLN), U(LSFT), T(N), T(E), T(W), T(SPACE), T(MINS), T(S), T(SPACE), END);
-    case T_CHSE:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(S), END);
-    case T_PREV:  return MACRODOWN(D(RCTL), T(B), U(RCTL), D(LSFT), T(9), U(LSFT),  END);
-    case T_NEXT:  return MACRODOWN(D(RCTL), T(B), U(RCTL), D(LSFT), T(0), U(LSFT),  END);
-    case T_RSZE:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(Z), END);
-    case T_SPLT:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(MINS), END);
-    case T_RTE:   return MACRODOWN(D(RCTL), T(B), T(O), U(RCTL), END);
-    case T_LAY:   return MACRODOWN(D(RCTL), T(B), U(RCTL), T(SPACE), END);
-    case T_COPY:  return MACRODOWN(D(RCTL), T(B), U(RCTL), T(ENT), END);
   }
   return MACRO_NONE;
 };
@@ -451,6 +410,14 @@ void matrix_scan_user(void) {
       unregister_code(KC_LGUI);
       unregister_code(KC_LSFT);
       unregister_code(KC_4);
+    }
+    /* `tn` creates new tmux session */
+    SEQ_TWO_KEYS(KC_T,KC_N) {
+      register_code(KC_RCTL);
+      register_code(KC_B);
+      unregister_code(KC_B);
+      unregister_code(KC_RCTL);
+      SEND_STRING(":new -s ");
     }
     /* `u` types username */
     SEQ_ONE_KEY (KC_U) {
