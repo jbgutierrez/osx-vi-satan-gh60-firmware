@@ -34,7 +34,9 @@
 #define LT_A LT(_AR, KC_A)
 #define LT_SPC LT(_AR, KC_SPC)
 #define LT_TAB LT(_WN, KC_TAB)
-#define LT_GRV LT(_TM, KC_GRV)
+
+
+#define T_CAPS CTL_T(KC_ESC)
 
 enum key_id {
   NONE = 0,
@@ -61,39 +63,38 @@ enum key_id {
   KF_EQL, // =, F12
 
   // Tap dancing definintions
-  TD_SCLN,
+  TD_GRV,
   TD_LBRC,
   TD_RBRC,
-  TD_GRV,
-  TD_CAPS,
-  TD_LCTL,
+  TD_SLSH,
 };
 
 uint16_t kf_timers[12];
-uint16_t quote_timer = 0;
-bool oneshot_symbol = false;
-
+uint16_t quot_timer = 0;
+uint16_t scln_timer = 0;
+bool spanish_detection = true;
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-  /* Keymap _BA: (Base Layer) Default Layer
-   * ,-----------------------------------------------------------.
-   * |   ~| 1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|Backsp |
-   * |-----------------------------------------------------------|
-   * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|  \  |
-   * |-----------------------------------------------------------|
-   * |EscCtrl|  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return |
-   * |-----------------------------------------------------------|
-   * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift     |
-   * |-----------------------------------------------------------|
-   * |Ctrl|Alt |Gui |      Space            |Lead |Gui |Alt |Ctrl|
-   * `-----------------------------------------------------------'
-   */
-[_BA] = KEYMAP(
-  TD(TD_GRV)  , M(KF_1) , M(KF_2) , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0)     , M(KF_MINS)  , M(KF_EQL)   , KC_BSPC     , \
-  LT_TAB      , KC_Q    , KC_W    , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P        , TD(TD_LBRC) , TD(TD_RBRC) , KC_BSLS     , \
-  TD(TD_CAPS) , LT_A    , KC_S    , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , TD(TD_SCLN) , KC_QUOT     , /*          , */KC_ENT    , \
-  F(F_LSFT)   , /*      , */KC_Z  , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT      , KC_SLSH     , /*          , */F(F_RSFT) , \
-  KC_LCTL     , KC_LALT , B_LGUI  , /*      ,         ,         ,         , */LT_SPC , /*      ,         , */ KC_LEAD  , KC_RGUI     , KC_RALT     , KC_RCTL)    ,
+/* Keymap _BA: (Base Layer) Default Layer
+ * ,-----------------------------------------------------------.
+ * |   `| 1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|Backsp |
+ * |-----------------------------------------------------------|
+ * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|  \  |
+ * |-----------------------------------------------------------|
+ * |Ctrl   |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return |
+ * |-----------------------------------------------------------|
+ * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift     |
+ * |-----------------------------------------------------------|
+ * |    |Alt |Gui |      Space            |Alt |Lead|    |     |
+ * `-----------------------------------------------------------'
+ */
+[_BA] = KEYMAP_ANSI(
+  TD(TD_GRV) , M(KF_1) , M(KF_2) , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0)    , M(KF_MINS)  , M(KF_EQL)   , KC_BSLS     , \
+  LT_TAB     , KC_Q    , KC_W    , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P       , TD(TD_LBRC) , TD(TD_RBRC) , KC_BSPC     , \
+  T_CAPS     , LT_A    , KC_S    , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , KC_SCLN    , KC_QUOT     , /*          , */KC_ENT    , \
+  F(F_LSFT)  , /*      , */KC_Z  , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT     , TD(TD_SLSH) , /*          , */F(F_RSFT) , \
+  _______    , KC_LALT , B_LGUI  , /*      ,         ,         ,         , */LT_SPC , /*      ,         , */ KC_RALT , KC_LEAD     , _______     , _______)    ,
+
 
 /* Keymap _AR: Arrow Layer */
 [_AR] = KEYMAP_ANSI(
@@ -154,10 +155,10 @@ void shifted_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
   bool shifted = state->count == 2;
   uint8_t kc;
   switch(state->keycode) {
-    case TD(TD_SCLN) : kc = KC_SCLN; break;
+    case TD(TD_GRV)  : kc = KC_GRV; break;
     case TD(TD_LBRC) : kc = KC_LBRC; break;
     case TD(TD_RBRC) : kc = KC_RBRC; break;
-    case TD(TD_GRV)  : kc = KC_GRV; break;
+    case TD(TD_SLSH) : kc = KC_SLSH; break;
     default: return;
   }
 
@@ -170,77 +171,11 @@ void shifted_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
   }
 };
 
-typedef struct {
-  bool locked;
-} caps_state;
-
-void on_caps_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
-  caps_state *caps = (caps_state *) user_data;
-
-  if (caps->locked || (!state->pressed && state->count > 1)) {
-    register_code(KC_CAPS);
-  } else {
-    if (state->pressed) {
-      register_code(KC_RCTL);
-    } else {
-      register_code(KC_ESC);
-    }
-  }
-}
-
-void on_caps_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
-  caps_state *caps = (caps_state *) user_data;
-
-  if (caps->locked || (!state->pressed && state->count > 1)) {
-    unregister_code(KC_CAPS);
-    caps->locked = !caps->locked;
-  } else {
-    if (state->pressed) {
-      unregister_code(KC_RCTL);
-    } else {
-      unregister_code(KC_ESC);
-      clear_keyboard();
-    }
-  }
-}
-
-void on_lctl_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->pressed) {
-    register_code(KC_LCTL);
-  } else {
-    layer_on(_SY);
-    oneshot_symbol = true;
-  }
-}
-
-void on_lctl_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
-  unregister_code(KC_LCTL);
-}
-
-void on_grv_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->pressed) {
-    layer_on(_TM);
-  } else {
-    shifted_tap_dance_fn(state, user_data);
-  }
-}
-
-void on_grv_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
-  if (state->pressed) {
-    layer_off(_TM);
-  }
-}
-
-const qk_tap_dance_action_t tap_dance_actions[] = {
-  [TD_SCLN] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
+extern qk_tap_dance_action_t tap_dance_actions[] = {
+  [TD_GRV]  = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
   [TD_LBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
   [TD_RBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
-  [TD_GRV]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_grv_tap_dance_finished_fn, on_grv_tap_dance_reset_fn),
-  [TD_LCTL]  = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_lctl_tap_dance_finished_fn, on_lctl_tap_dance_reset_fn),
-  [TD_CAPS] = {
-    .fn = { NULL, on_caps_tap_dance_finished_fn, on_caps_tap_dance_reset_fn },
-    .user_data = (void *)&((caps_state) { false }),
-  },
+  [TD_SLSH] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
 };
 
 const uint16_t PROGMEM fn_actions[] = {
@@ -301,36 +236,72 @@ const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
 
 LEADER_EXTERNS();
 
+bool send_alt(uint16_t keycode) {
+  bool caps_lock = host_keyboard_leds() & (1<<USB_LED_CAPS_LOCK);
+  uint8_t shiftmask = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
+  del_mods(shiftmask);
+  if (caps_lock) TAP_ONCE(KC_CAPS);
+  register_code(KC_RALT);
+  TAP_ONCE(keycode);
+  unregister_code(KC_RALT);
+  if (caps_lock) TAP_ONCE(KC_CAPS);
+  set_mods(shiftmask);
+}
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  if (!spanish_detection) { return true; }
+
   if (record->event.pressed) {
-    if (quote_timer) {
-      quote_timer = 0;
+    uint8_t shiftmask = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
+    if (quot_timer) {
+      quot_timer = 0;
       switch (keycode) {
         case LT_A:
         case KC_E:
         case KC_I:
         case KC_O:
         case KC_U:
-          register_code(KC_RALT);
-          register_code(KC_E);
-          unregister_code(KC_E);
-          unregister_code(KC_RALT);
+          send_alt(KC_E);
           break;
         case KC_QUOT:
-          register_code(KC_QUOT);
-          unregister_code(KC_QUOT);
+          register_code(KC_RSFT);
+          TAP_ONCE(KC_QUOT);
+          unregister_code(KC_RSFT);
+          return false;
+        default:
+          TAP_ONCE(KC_QUOT);
           break;
       }
     }
-    uint8_t f_esc_shift_mask = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
-    if (!f_esc_shift_mask && keycode == KC_QUOT) {
-      quote_timer = timer_read();
+    if (!shiftmask && keycode == KC_QUOT) {
+      quot_timer = timer_read();
       return false;
     }
-  } else {
-    if (oneshot_symbol) {
-      layer_off(_SY);
-      oneshot_symbol = false;
+
+    if (scln_timer) {
+      scln_timer = 0;
+      switch (keycode) {
+        case LT_A:
+        case KC_E:
+        case KC_I:
+        case KC_O:
+        case KC_U:
+          send_alt(KC_N);
+          TAP_ONCE(KC_N);
+          break;
+        case KC_SCLN:
+          register_code(KC_RSFT);
+          TAP_ONCE(KC_SCLN);
+          unregister_code(KC_RSFT);
+          return false;
+        default:
+          TAP_ONCE(KC_SCLN);
+          break;
+      }
+    }
+    if (!shiftmask && keycode == KC_SCLN) {
+      scln_timer = timer_read();
+      return false;
     }
   }
 
@@ -339,10 +310,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 uint8_t layer_was;
 void matrix_scan_user(void) {
-  if (quote_timer && timer_elapsed(quote_timer) > TAPPING_TERM) {
-    quote_timer = 0;
-    register_code(KC_QUOT);
-    unregister_code(KC_QUOT);
+  if (spanish_detection) {
+    if (quot_timer && timer_elapsed(quot_timer) > TAPPING_TERM) {
+      quot_timer = 0;
+      TAP_ONCE(KC_QUOT);
+    }
+
+    if (scln_timer && timer_elapsed(scln_timer) > TAPPING_TERM) {
+      scln_timer = 0;
+      TAP_ONCE(KC_SCLN);
+    }
   }
 
   uint8_t layer = biton32(layer_state);
@@ -354,6 +331,10 @@ void matrix_scan_user(void) {
   LEADER_DICTIONARY() {
     leading = false;
     leader_end();
+    /* `tab` toggles Caps Lock */
+    SEQ_ONE_KEY(LT_TAB) {
+      TAP_ONCE(KC_CAPS);
+    }
 
     /* `c` activates cursor layer */
     SEQ_ONE_KEY(KC_C) {
@@ -375,6 +356,10 @@ void matrix_scan_user(void) {
     /* `h` activates hardware layer */
     SEQ_ONE_KEY(KC_H) {
       layer_on(_HW);
+    }
+    /* `k,space,space` toggles spanish detection mode */
+    SEQ_THREE_KEYS (KC_K, KC_SPC, KC_SPC) {
+     spanish_detection = !spanish_detection;
     }
     /* `l` locks screen */
     SEQ_ONE_KEY(KC_L) {
