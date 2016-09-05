@@ -13,6 +13,7 @@
 
 #define B_LGUI GUI_T(KC_PAST)
 
+#define A_BSPC LALT(KC_BSPC)
 #define A_BWORD LALT(KC_LEFT)
 #define A_END LCTL(KC_E)
 #define A_FIND LGUI(KC_F)
@@ -31,10 +32,8 @@
 #define W_NEXT LCAG(KC_RGHT)
 #define W_PREV LCAG(KC_LEFT)
 
-#define LT_A LT(_AR, KC_A)
 #define LT_SPC LT(_AR, KC_SPC)
 #define LT_TAB LT(_WN, KC_TAB)
-
 
 #define T_CAPS CTL_T(KC_ESC)
 
@@ -44,9 +43,6 @@ enum key_id {
 
   F_LSFT,
   F_RSFT,
-
-  // Arrow
-  C_VMOD,
 
   // Function / number keys
   KF_1, // 1, F1
@@ -91,18 +87,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_BA] = KEYMAP_ANSI(
   TD(TD_GRV) , M(KF_1) , M(KF_2) , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0)    , M(KF_MINS)  , M(KF_EQL)   , KC_BSLS     , \
   LT_TAB     , KC_Q    , KC_W    , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P       , TD(TD_LBRC) , TD(TD_RBRC) , KC_BSPC     , \
-  T_CAPS     , LT_A    , KC_S    , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , KC_SCLN    , KC_QUOT     , /*          , */KC_ENT    , \
+  T_CAPS     , KC_A    , KC_S    , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , KC_SCLN    , KC_QUOT     , /*          , */KC_ENT    , \
   F(F_LSFT)  , /*      , */KC_Z  , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT     , TD(TD_SLSH) , /*          , */F(F_RSFT) , \
   _______    , KC_LALT , B_LGUI  , /*      ,         ,         ,         , */LT_SPC , /*      ,         , */ KC_RALT , KC_LEAD     , _______     , _______)    ,
 
 
 /* Keymap _AR: Arrow Layer */
 [_AR] = KEYMAP_ANSI(
-  _______  , _______ , _______   , _______ , KC_END  , _______   , _______ , _______   , _______ , _______ , KC_HOME    , _______ , _______ , _______   , \
-  _______  , _______ , A_WORD    , A_END   , _______ , _______   , _______ , KC_PGUP   , KC_INS  , _______ , A_PASTE    , _______ , _______ , _______   , \
-  F(L_BSE) , _______ , A_START   , KC_PGDN , _______ , _______   , KC_LEFT , KC_DOWN   , KC_UP   , KC_RGHT , _______    , _______ , /*      , */_______ , \
-  _______  , /*      , */_______ , KC_DEL  , _______ , F(C_VMOD) , A_BWORD , A_FNEXT   , _______ , _______ , _______    , A_FIND  , /*      , */_______ , \
-  _______  , _______ , _______   , /*      ,         ,           ,         , */_______ , /*      ,         , */ _______ , _______ , _______ , _______)  ,
+  _______  , _______ , _______   , _______ , A_END   , _______ , _______ , _______   , _______ , _______ , A_START    , _______ , _______ , _______   , \
+  _______  , _______ , A_WORD    , KC_END  , _______ , _______ , _______ , KC_PGUP   , KC_INS  , _______ , A_PASTE    , _______ , _______ , A_BSPC    , \
+  F(L_BSE) , _______ , KC_HOME   , KC_PGDN , _______ , _______ , KC_LEFT , KC_DOWN   , KC_UP   , KC_RGHT , _______    , _______ , /*      , */_______ , \
+  _______  , /*      , */_______ , KC_DEL  , _______ , _______ , A_BWORD , A_FNEXT   , _______ , _______ , _______    , A_FIND  , /*      , */KC_UP   , \
+  _______  , _______ , _______   , /*      ,         ,         ,         , */_______ , /*      ,         , */ _______ , KC_LEFT , KC_DOWN , KC_RGHT)  ,
 
 /* Keymap _MO: Media and Mouse Layer */
 [_MO] = KEYMAP_ANSI(
@@ -183,22 +179,7 @@ const uint16_t PROGMEM fn_actions[] = {
 
   [F_LSFT] = ACTION_MODS_ONESHOT(MOD_LSFT),
   [F_RSFT] = ACTION_MODS_ONESHOT(MOD_RSFT),
-  [C_VMOD] = ACTION_FUNCTION(C_VMOD),
 };
-
-void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
-  switch (id) {
-    case C_VMOD:
-      if (record->event.pressed) {
-        if (keyboard_report->mods & MOD_BIT(KC_LSFT)) {
-          unregister_code(KC_LSFT);
-        } else {
-          register_code(KC_LSFT);
-        }
-      }
-      break;
-  }
-}
 
 const macro_t *ang_handle_kf(keyrecord_t *record, uint8_t id) {
   uint8_t code = id - KF_1;
@@ -256,7 +237,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (quot_timer) {
       quot_timer = 0;
       switch (keycode) {
-        case LT_A:
+        case KC_A:
         case KC_E:
         case KC_I:
         case KC_O:
@@ -281,7 +262,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (scln_timer) {
       scln_timer = 0;
       switch (keycode) {
-        case LT_A:
+        case KC_A:
         case KC_E:
         case KC_I:
         case KC_O:
