@@ -63,6 +63,7 @@ enum key_id {
   TD_LBRC,
   TD_RBRC,
   TD_SLSH,
+  TD_MISS,
 };
 
 uint16_t kf_timers[12];
@@ -85,11 +86,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------'
  */
 [_BA] = KEYMAP_ANSI(
-  TD(TD_GRV) , M(KF_1) , M(KF_2) , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0)    , M(KF_MINS)  , M(KF_EQL)   , KC_BSLS     , \
-  LT_TAB     , KC_Q    , KC_W    , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P       , TD(TD_LBRC) , TD(TD_RBRC) , KC_BSPC     , \
-  T_CAPS     , KC_A    , KC_S    , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , KC_SCLN    , KC_QUOT     , /*          , */KC_ENT    , \
-  F(F_LSFT)  , /*      , */KC_Z  , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT     , TD(TD_SLSH) , /*          , */F(F_RSFT) , \
-  _______    , KC_LALT , B_LGUI  , /*      ,         ,         ,         , */LT_SPC , /*      ,         , */ KC_RALT , KC_LEAD     , _______     , _______)    ,
+  TD(TD_GRV)  , M(KF_1) , M(KF_2) , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0)    , M(KF_MINS)  , M(KF_EQL)   , KC_BSLS     , \
+  LT_TAB      , KC_Q    , KC_W    , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P       , TD(TD_LBRC) , TD(TD_RBRC) , KC_BSPC     , \
+  T_CAPS      , KC_A    , KC_S    , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , KC_SCLN    , KC_QUOT     , /*          , */KC_ENT    , \
+  F(F_LSFT)   , /*      , */KC_Z  , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT     , TD(TD_SLSH) , /*          , */F(F_RSFT) , \
+  TD(TD_MISS) , KC_LALT , B_LGUI  , /*      ,         ,         ,         , */LT_SPC , /*      ,         , */ KC_RALT , KC_LEAD     , _______     , _______)    ,
 
 
 /* Keymap _AR: Arrow Layer */
@@ -145,7 +146,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,         , */ _______ , _______ , _______ , _______)  ,
 };
 
-#define TAP_ONCE(code) register_code (code); unregister_code (code)
+#define TAP_ONE(code) register_code(code); unregister_code(code)
+#define TAP_TWO(code1, code2) register_code(code1); register_code(code2); unregister_code(code2); unregister_code(code1);
+#define TAP_THREE(code1, code2, code3) register_code(code1); register_code(code2); register_code(code3); unregister_code(code3); unregister_code(code2); unregister_code(code1);
 
 void shifted_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
   bool shifted = state->count == 2;
@@ -159,11 +162,23 @@ void shifted_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
   }
 
   if (shifted) {
-    register_code (KC_RSFT);
-    TAP_ONCE(kc);
-    unregister_code (KC_RSFT);
+    TAP_TWO(KC_RSFT, kc);
   } else {
-    TAP_ONCE(kc);
+    TAP_ONE(kc);
+  }
+};
+
+void mission_control_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
+  switch(state->count) {
+    case 1:
+      TAP_TWO(KC_LCTL, KC_UP);
+      break;
+    case 2:
+      TAP_TWO(KC_LCTL, KC_DOWN);
+      break;
+    default:
+      TAP_ONE(KC_F11);
+      return;
   }
 };
 
@@ -172,6 +187,7 @@ extern qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_LBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
   [TD_RBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
   [TD_SLSH] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
+  [TD_MISS] = ACTION_TAP_DANCE_FN(mission_control_tap_dance_fn),
 };
 
 const uint16_t PROGMEM fn_actions[] = {
@@ -200,8 +216,7 @@ const macro_t *ang_handle_kf(keyrecord_t *record, uint8_t id) {
       }
     }
 
-    register_code(kc);
-    unregister_code(kc);
+    TAP_ONE(kc);
   }
   return MACRO_NONE;
 }
@@ -221,11 +236,9 @@ bool send_alt(uint16_t keycode) {
   bool caps_lock = host_keyboard_leds() & (1<<USB_LED_CAPS_LOCK);
   uint8_t shiftmask = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
   del_mods(shiftmask);
-  if (caps_lock) TAP_ONCE(KC_CAPS);
-  register_code(KC_RALT);
-  TAP_ONCE(keycode);
-  unregister_code(KC_RALT);
-  if (caps_lock) TAP_ONCE(KC_CAPS);
+  if (caps_lock) TAP_ONE(KC_CAPS);
+  TAP_TWO(KC_RALT, keycode);
+  if (caps_lock) TAP_ONE(KC_CAPS);
   set_mods(shiftmask);
 }
 
@@ -245,12 +258,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           send_alt(KC_E);
           break;
         case KC_QUOT:
-          register_code(KC_RSFT);
-          TAP_ONCE(KC_QUOT);
-          unregister_code(KC_RSFT);
+          TAP_TWO(KC_RSFT, KC_QUOT);
           return false;
         default:
-          TAP_ONCE(KC_QUOT);
+          TAP_ONE(KC_QUOT);
           break;
       }
     }
@@ -268,15 +279,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_O:
         case KC_U:
           send_alt(KC_N);
-          TAP_ONCE(KC_N);
+          TAP_ONE(KC_N);
           break;
         case KC_SCLN:
-          register_code(KC_RSFT);
-          TAP_ONCE(KC_SCLN);
-          unregister_code(KC_RSFT);
+          TAP_TWO(KC_RSFT, KC_SCLN);
           return false;
         default:
-          TAP_ONCE(KC_SCLN);
+          TAP_ONE(KC_SCLN);
           break;
       }
     }
@@ -294,12 +303,12 @@ void matrix_scan_user(void) {
   if (spanish_detection) {
     if (quot_timer && timer_elapsed(quot_timer) > TAPPING_TERM) {
       quot_timer = 0;
-      TAP_ONCE(KC_QUOT);
+      TAP_ONE(KC_QUOT);
     }
 
     if (scln_timer && timer_elapsed(scln_timer) > TAPPING_TERM) {
       scln_timer = 0;
-      TAP_ONCE(KC_SCLN);
+      TAP_ONE(KC_SCLN);
     }
   }
 
@@ -313,26 +322,16 @@ void matrix_scan_user(void) {
     leading = false;
     leader_end();
     /* `tab` toggles Caps Lock */
-    SEQ_ONE_KEY(LT_TAB) {
-      TAP_ONCE(KC_CAPS);
+    SEQ_ONE_KEY(T_CAPS) {
+      TAP_ONE(KC_CAPS);
     }
-
-    /* `c` activates cursor layer */
-    SEQ_ONE_KEY(KC_C) {
-      layer_on(_AR);
-    }
-    /* `d` shows desktop */
+    /* `d` open debug panel */
     SEQ_ONE_KEY(KC_D) {
-      register_code(KC_F11);
-      unregister_code(KC_F11);
+      TAP_THREE(KC_LGUI, KC_LALT, KC_I);
     }
-    /* `e` launches exposé and enters mouse layer */
-    SEQ_ONE_KEY(KC_E) {
-      register_code(KC_LCTL);
-      register_code(KC_UP);
-      unregister_code(KC_UP);
-      unregister_code(KC_LCTL);
-      layer_on(_MO);
+    /* `c` activates arrow layer */
+    SEQ_ONE_KEY(KC_A) {
+      layer_on(_AR);
     }
     /* `h` activates hardware layer */
     SEQ_ONE_KEY(KC_H) {
@@ -344,12 +343,7 @@ void matrix_scan_user(void) {
     }
     /* `l` locks screen */
     SEQ_ONE_KEY(KC_L) {
-      register_code(KC_LCTL);
-      register_code(KC_LSFT);
-      register_code(KC_MEDIA_EJECT);
-      unregister_code(KC_LCTL);
-      unregister_code(KC_LSFT);
-      unregister_code(KC_MEDIA_EJECT);
+      TAP_THREE(KC_LGUI, KC_LALT, KC_MEDIA_EJECT);
     }
     /* `m` activates mouse and media layer */
     SEQ_ONE_KEY(KC_M) {
@@ -359,35 +353,37 @@ void matrix_scan_user(void) {
     PASSWORD_SEQUENCE {
       SEND_STRING (PASSWORD);
     }
+    /* `q` close all windows of current application */
+    SEQ_ONE_KEY(KC_Q) {
+      TAP_THREE(KC_LGUI, KC_LALT, KC_W);
+    }
     /* `s` saves screenshot */
     SEQ_ONE_KEY(KC_S) {
-      register_code(KC_LGUI);
-      register_code(KC_LSFT);
-      register_code(KC_3);
-      unregister_code(KC_LGUI);
-      unregister_code(KC_LSFT);
-      unregister_code(KC_3);
+      TAP_THREE(KC_LGUI, KC_LSFT, KC_3);
     }
     /* `ss` saves screenshot of selected area */
     SEQ_TWO_KEYS(KC_S, KC_S) {
-      register_code(KC_LGUI);
-      register_code(KC_LSFT);
-      register_code(KC_4);
-      unregister_code(KC_LGUI);
-      unregister_code(KC_LSFT);
-      unregister_code(KC_4);
+      TAP_THREE(KC_LGUI, KC_LSFT, KC_4);
+    }
+    /* `t` taps on current mouse position */
+    SEQ_ONE_KEY(KC_T) {
+      mousekey_on(KC_BTN1);
+      mousekey_send();
+      mousekey_off(KC_BTN1);
+      mousekey_send();
     }
     /* `tn` creates new tmux session */
     SEQ_TWO_KEYS(KC_T,KC_N) {
-      register_code(KC_RCTL);
-      register_code(KC_B);
-      unregister_code(KC_B);
-      unregister_code(KC_RCTL);
+      TAP_TWO(KC_RCTL, KC_B);
       SEND_STRING(":new -s ");
     }
     /* `u` types username */
     SEQ_ONE_KEY (KC_U) {
       SEND_STRING (USERNAME);
+    }
+    /* `w` activates window layer */
+    SEQ_ONE_KEY(KC_W) {
+      layer_on(_WN);
     }
   }
 }
