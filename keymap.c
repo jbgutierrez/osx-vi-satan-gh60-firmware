@@ -12,16 +12,13 @@
 
 #define _______ KC_TRNS
 
-#define B_LGUI GUI_T(KC_PAST)
-
 #define A_BSPC LALT(KC_BSPC)
 #define A_BWORD LALT(KC_LEFT)
-#define A_END LCTL(KC_E)
 #define A_FIND LGUI(KC_F)
 #define A_FNEXT LGUI(KC_G)
-#define A_PASTE LGUI(KC_V)
-#define A_START LCTL(KC_A)
 #define A_WORD LALT(KC_RGHT)
+#define A_END LGUI(KC_RGHT)
+#define A_START LGUI(KC_LEFT)
 
 #define W_CENT LGUI(LALT(KC_C))
 #define W_DOWN LGUI(LALT(KC_DOWN))
@@ -32,9 +29,13 @@
 #define W_UP LGUI(LALT(KC_UP))
 #define W_NEXT LCAG(KC_RGHT)
 #define W_PREV LCAG(KC_LEFT)
+#define W_EXPO LCTL(KC_UP)
+#define W_WIND LCTL(KC_DOWN)
+#define W_CALL LGUI(LALT(KC_W))
 
 #define LT_SPC LT(_AR, KC_SPC)
 #define LT_TAB LT(_WN, KC_TAB)
+#define LT_CAPS LT(_SY, KC_CAPS)
 
 #define T_CAPS CTL_T(KC_ESC)
 
@@ -62,11 +63,8 @@ enum key_id {
   KF_EQL, // =, F12
 
   // Tap dancing definintions
-  TD_GRV,
-  TD_LBRC,
-  TD_RBRC,
-  TD_SLSH,
-  TD_MISS,
+  TD_ESC,
+  TD_LGUI,
 };
 
 uint16_t kf_timers[12];
@@ -77,23 +75,23 @@ bool spanish_detection = true;
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* Keymap _BA: (Base Layer) Default Layer
  * ,-----------------------------------------------------------.
- * |   `| 1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|Backsp |
+ * |Esc!| 1|  2|  3|  4|  5|  6|  7|  8|  9|  0|  -|  =|  `| \ |
  * |-----------------------------------------------------------|
- * |Tab  |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|  \  |
+ * |Tab! |  Q|  W|  E|  R|  T|  Y|  U|  I|  O|  P|  [|  ]|Back |
  * |-----------------------------------------------------------|
- * |Ctrl   |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return |
+ * |Ctrl!  |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return |
  * |-----------------------------------------------------------|
  * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift     |
  * |-----------------------------------------------------------|
- * |    |Alt |Gui |      Space            |Alt |Lead|    |     |
+ * |Ctrl|Alt |Gui!|      Space            |Gui  |Alt|Ctrl|Fn0  |
  * `-----------------------------------------------------------'
  */
 [_BA] = KEYMAP_ANSI(
-  TD(TD_GRV)  , M(KF_1) , M(KF_2) , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0)    , M(KF_MINS)  , M(KF_EQL)   , KC_BSLS     , \
-  LT_TAB      , KC_Q    , KC_W    , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P       , TD(TD_LBRC) , TD(TD_RBRC) , KC_BSPC     , \
-  T_CAPS      , KC_A    , KC_S    , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , KC_SCLN    , KC_QUOT     , /*          , */KC_ENT    , \
-  F(F_LSFT)   , /*      , */KC_Z  , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT     , TD(TD_SLSH) , /*          , */F(F_RSFT) , \
-  TD(TD_MISS) , KC_LALT , B_LGUI  , /*      ,         ,         ,         , */LT_SPC , /*      ,         , */ KC_RALT , KC_LEAD     , _______     , _______)    ,
+  TD(TD_ESC) , M(KF_1) , M(KF_2)     , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0)    , M(KF_MINS) , M(KF_EQL) , KC_BSLS     , \
+  LT_TAB     , KC_Q    , KC_W        , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P       , KC_LBRC    , KC_RBRC   , KC_BSPC     , \
+  T_CAPS     , KC_A    , KC_S        , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , KC_SCLN    , KC_QUOT    , /*        , */KC_ENT    , \
+  F(F_LSFT)  , /*      , */KC_Z      , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT     , KC_SLSH    , /*        , */F(F_RSFT) , \
+  KC_LCTL    , KC_LALT , TD(TD_LGUI) , /*      ,         ,         ,         , */LT_SPC , /*      ,         , */ KC_RALT , KC_RGUI    , KC_RCTL   , MO(HHKB))   ,
 
 
 /* Keymap _AR: Arrow Layer */
@@ -106,17 +104,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Keymap _MO: Media and Mouse Layer */
 [_MO] = KEYMAP_ANSI(
-  _______  , KC_F14  , KC_F15     , _______ , _______ , _______ , _______ , KC_MPRV   , KC_MPLY , KC_MNXT , KC_MUTE    , KC_VOLD , KC_VOLU , _______    , \
+  F(L_BSE) , KC_F14  , KC_F15     , _______ , _______ , _______ , _______ , KC_MPRV   , KC_MPLY , KC_MNXT , KC_MUTE    , KC_VOLD , KC_VOLU , _______    , \
   _______  , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , _______ , _______    , \
-  F(L_BSE) , _______ , _______    , KC_BTN1 , KC_BTN2 , _______ , KC_MS_L , KC_MS_D   , KC_MS_U , KC_MS_R , _______    , _______ , /*      , */ _______ , \
-  _______  , /*      , */ _______ , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , /*      , */ _______ , \
-  _______  , _______ , _______    , /*      ,         ,         ,         , */KC_MPLY , /*      ,         , */ _______ , _______ , _______ , _______)   ,
+  _______  , _______ , _______    , KC_BTN1 , KC_BTN2 , _______ , KC_MS_L , KC_MS_D   , KC_MS_U , KC_MS_R , _______    , _______ , /*      , */ _______ , \
+  _______  , /*      , */ _______ , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , /*      , */ KC_MS_U , \
+  _______  , _______ , _______    , /*      ,         ,         ,         , */KC_MPLY , /*      ,         , */ _______ , KC_MS_L , KC_MS_D , KC_MS_R)   ,
 
 /* Keymap _WN: Windows Layer */
 [_WN] = KEYMAP_ANSI(
-  _______  , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______  , _______    , _______ , _______ , _______   , \
-  _______  , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , W_TOGGLE , W_PREV     , _______ , _______ , _______   , \
-  F(L_BSE) , _______ , _______    , KC_F11  , W_MAX   , _______ , W_LEFT  , W_DOWN    , W_UP    , W_RGHT   , _______    , _______ , /*      , */_______ , \
+  F(L_BSE) , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______  , _______    , _______ , _______ , _______   , \
+  _______  , W_CALL  , W_WIND     , W_EXPO  , _______ , _______ , _______ , _______   , _______ , W_TOGGLE , W_PREV     , _______ , _______ , _______   , \
+  _______  , _______ , _______    , KC_F11  , W_MAX   , _______ , W_LEFT  , W_DOWN    , W_UP    , W_RGHT   , _______    , _______ , /*      , */_______ , \
   _______  , /*      , */ _______ , _______ , W_CENT  , _______ , _______ , W_NEXT    , _______ , _______  , _______    , _______ , /*      , */_______ , \
   _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,          , */ _______ , _______ , _______ , _______)  ,
 
@@ -342,6 +340,10 @@ void matrix_scan_user(void) {
   LEADER_DICTIONARY() {
     leading = false;
     leader_end();
+    /* `tab` one shot modifier for tab */
+    SEQ_ONE_KEY(LT_TAB) {
+      TAP_TWO(KC_LGUI, KC_TAB);
+    }
     /* `tab` toggles Caps Lock */
     SEQ_ONE_KEY(T_CAPS) {
       TAP_ONE(KC_CAPS);
@@ -357,10 +359,6 @@ void matrix_scan_user(void) {
     /* `h` activates hardware layer */
     SEQ_ONE_KEY(KC_H) {
       layer_on(_HW);
-    }
-    /* `k,space,space` toggles spanish detection mode */
-    SEQ_THREE_KEYS (KC_K, KC_SPC, KC_SPC) {
-     spanish_detection = !spanish_detection;
     }
     /* `l` locks screen */
     SEQ_ONE_KEY(KC_L) {
@@ -381,6 +379,10 @@ void matrix_scan_user(void) {
     /* `s` saves screenshot */
     SEQ_ONE_KEY(KC_S) {
       TAP_THREE(KC_LGUI, KC_LSFT, KC_3);
+    }
+    /* `esc` moves focus to the menu bar */
+    SEQ_ONE_KEY(TD(TD_ESC)) {
+      TAP_TWO(KC_LCTL, KC_F2);
     }
     /* `ss` saves screenshot of selected area */
     SEQ_TWO_KEYS(KC_S, KC_S) {
