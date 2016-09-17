@@ -45,6 +45,8 @@ enum key_id {
   F_LSFT,
   F_RSFT,
 
+  C_VMOD,
+
   // Function / number keys
   KF_1, // 1, F1
   KF_2, // 2, F2
@@ -96,11 +98,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Keymap _AR: Arrow Layer */
 [_AR] = KEYMAP_ANSI(
-  _______  , _______ , _______   , _______ , A_END   , _______ , _______ , _______   , _______ , _______ , A_START    , _______ , _______ , _______   , \
-  _______  , _______ , A_WORD    , KC_END  , _______ , _______ , _______ , KC_PGUP   , KC_INS  , _______ , A_PASTE    , _______ , _______ , A_BSPC    , \
-  F(L_BSE) , _______ , KC_HOME   , KC_PGDN , _______ , _______ , KC_LEFT , KC_DOWN   , KC_UP   , KC_RGHT , _______    , _______ , /*      , */_______ , \
-  _______  , /*      , */_______ , KC_DEL  , _______ , _______ , A_BWORD , A_FNEXT   , _______ , _______ , _______    , A_FIND  , /*      , */KC_UP   , \
-  _______  , _______ , _______   , /*      ,         ,         ,         , */_______ , /*      ,         , */ _______ , KC_LEFT , KC_DOWN , KC_RGHT)  ,
+  F(L_BSE) , _______ , _______   , _______ , KC_END  , _______   , KC_HOME , _______   , _______ , _______ , KC_HOME    , _______ , _______ , _______   , \
+  _______  , _______ , A_WORD    , A_END   , _______ , _______   , _______ , KC_PGUP   , KC_INS  , _______ , _______    , _______ , _______ , A_BSPC    , \
+  _______  , A_START , _______   , KC_PGDN , _______ , _______   , KC_LEFT , KC_DOWN   , KC_UP   , KC_RGHT , _______    , _______ , /*      , */_______ , \
+  _______  , /*      , */_______ , KC_DEL  , _______ , F(C_VMOD) , A_BWORD , A_FNEXT   , _______ , _______ , _______    , A_FIND  , /*      , */KC_UP   , \
+  _______  , _______ , _______   , /*      ,         ,           ,         , */_______ , /*      ,         , */ _______ , KC_LEFT , KC_DOWN , KC_RGHT)  ,
 
 /* Keymap _MO: Media and Mouse Layer */
 [_MO] = KEYMAP_ANSI(
@@ -198,7 +200,23 @@ const uint16_t PROGMEM fn_actions[] = {
 
   [F_LSFT] = ACTION_MODS_ONESHOT(MOD_LSFT),
   [F_RSFT] = ACTION_MODS_ONESHOT(MOD_RSFT),
+  [C_VMOD] = ACTION_FUNCTION(C_VMOD),
 };
+
+void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
+  switch (id) {
+    case C_VMOD:
+      if (record->event.pressed) {
+        uint8_t shiftmask = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
+        if (shiftmask) {
+          unregister_code(KC_LSFT);
+        } else {
+          register_code(KC_LSFT);
+        }
+      }
+      break;
+  }
+}
 
 const macro_t *ang_handle_kf(keyrecord_t *record, uint8_t id) {
   uint8_t code = id - KF_1;
