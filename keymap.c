@@ -8,6 +8,7 @@
 #define _WN 3
 #define _HW 4
 #define _SY 5
+#define HHKB 6
 
 #define _______ KC_TRNS
 
@@ -131,63 +132,65 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------'
  */
 [_SY] = KEYMAP_ANSI(
-  KC_TILD  , KC_EXLM , KC_AT      , KC_HASH  , KC_DLR  , KC_PERC , KC_CIRC , KC_AMPR   , KC_ASTR , KC_LPRN , KC_RPRN    , KC_UNDS , KC_PLUS , KC_DEL    , \
+  F(L_BSE) , KC_EXLM , KC_AT      , KC_HASH  , KC_DLR  , KC_PERC , KC_CIRC , KC_AMPR   , KC_ASTR , KC_LPRN , KC_RPRN    , KC_UNDS , KC_PLUS , KC_DEL    , \
   _______  , KC_QUES , _______    , KC_EQUAL , _______ , _______ , KC_PERC , KC_UNDS   , _______ , KC_PIPE , KC_PLUS    , KC_RBRC , _______ , _______   , \
-  F(L_BSE) , KC_AMPR , KC_DLR     , KC_LCBR  , KC_LPRN , _______ , KC_HASH , KC_RPRN   , KC_RCBR , _______ , KC_COLN    , KC_DQUO , /*      , */_______ , \
+  _______  , KC_AMPR , KC_DLR     , KC_LCBR  , KC_LPRN , _______ , KC_HASH , KC_RPRN   , KC_RCBR , _______ , KC_COLN    , KC_DQUO , /*      , */_______ , \
   _______  , /*      , */ _______ , _______  , KC_CIRC , _______ , KC_BSLS , KC_EXLM   , KC_MINS , KC_LABK , KC_RABK    , KC_QUES , /*      , */_______ , \
-  F(L_BSE) , _______ , _______    , /*       ,         ,         ,         , */KC_PAST , /*      ,         , */ _______ , _______ , _______ , _______)  ,
+  _______  , _______ , _______    , /*       ,         ,         ,         , */KC_PAST , /*      ,         , */ _______ , _______ , _______ , _______)  ,
 
 /* Keymap _HW: Hardware Layer */
 [_HW] = KEYMAP_ANSI(
-  _______  , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , _______ , _______   , \
+  F(L_BSE) , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , _______ , _______   , \
   _______  , _______ , _______    , _______ , RESET   , _______ , _______ , _______   , _______ , _______ , _______    , BL_DEC  , BL_INC  , BL_TOGG   , \
-  F(L_BSE) , _______ , _______    , DEBUG   , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , /*      , */_______ , \
+  _______  , _______ , _______    , DEBUG   , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , /*      , */_______ , \
   _______  , /*      , */ _______ , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , /*      , */_______ , \
   _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,         , */ _______ , _______ , _______ , _______)  ,
+
+/* Keymap HHKB: HHKB mode (HHKB Fn) */
+[HHKB] = KEYMAP_ANSI(
+  KC_PWR  , KC_F1   , KC_F2      , KC_F3   , KC_F4   , KC_F5   , KC_F6   , KC_F7     , KC_F8   , KC_F9   , KC_F10     , KC_F11  , KC_INS  , KC_DEL     , \
+  KC_CAPS , _______ , _______    , _______ , _______ , _______ , _______ , _______   , KC_PSCR , KC_SLCK , KC_PAUS    , KC_UP   , _______ , KC_BSPC    , \
+  _______ , KC_VOLD , KC_VOLU    , KC_MUTE , _______ , _______ , KC_PAST , KC_PSLS   , KC_HOME , KC_PGUP , KC_LEFT    , KC_RGHT , /*      , */ KC_PENT , \
+  _______ , /*      , */ _______ , _______ , _______ , _______ , _______ , KC_PPLS   , KC_PMNS , KC_END  , KC_PGDN    , KC_DOWN , /*      , */ _______ , \
+  _______ , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,         , */ _______ , _______ , _______ , _______)   ,
 };
 
 #define TAP_ONE(code) register_code(code); unregister_code(code)
 #define TAP_TWO(code1, code2) register_code(code1); register_code(code2); unregister_code(code2); unregister_code(code1);
 #define TAP_THREE(code1, code2, code3) register_code(code1); register_code(code2); register_code(code3); unregister_code(code3); unregister_code(code2); unregister_code(code1);
 
-void shifted_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
-  bool shifted = state->count == 2;
-  uint8_t kc;
-  switch(state->keycode) {
-    case TD(TD_GRV)  : kc = KC_GRV; break;
-    case TD(TD_LBRC) : kc = KC_LBRC; break;
-    case TD(TD_RBRC) : kc = KC_RBRC; break;
-    case TD(TD_SLSH) : kc = KC_SLSH; break;
-    default: return;
-  }
-
-  if (shifted) {
-    TAP_TWO(KC_RSFT, kc);
-  } else {
-    TAP_ONE(kc);
-  }
-};
-
-void mission_control_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
+void esc_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
   switch(state->count) {
-    case 1:
-      TAP_TWO(KC_LCTL, KC_UP);
-      break;
     case 2:
-      TAP_TWO(KC_LCTL, KC_DOWN);
+      TAP_TWO(KC_RSFT, KC_GRV);
+      break;
+    case 3:
+      TAP_ONE(KC_GRV);
       break;
     default:
-      TAP_ONE(KC_F11);
+      TAP_ONE(KC_ESC);
       return;
   }
 };
 
+void on_lgui_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->pressed) { register_code(KC_LGUI); }
+}
+
+void on_lgui_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
+  uint8_t guimask = get_mods() & (MOD_BIT(KC_LGUI)|MOD_BIT(KC_RGUI));
+  if (guimask) {
+    unregister_code(KC_LGUI);
+  } else {
+    keyevent_t event = { pressed: true };
+    keyrecord_t record = { event: event };
+    process_leader(KC_LEAD, &record);
+  }
+};
+
 extern qk_tap_dance_action_t tap_dance_actions[] = {
-  [TD_GRV]  = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
-  [TD_LBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
-  [TD_RBRC] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
-  [TD_SLSH] = ACTION_TAP_DANCE_FN(shifted_tap_dance_fn),
-  [TD_MISS] = ACTION_TAP_DANCE_FN(mission_control_tap_dance_fn),
+  [TD_ESC]  = ACTION_TAP_DANCE_FN(esc_tap_dance_fn),
+  [TD_LGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_lgui_tap_dance_finished_fn, on_lgui_tap_dance_reset_fn),
 };
 
 const uint16_t PROGMEM fn_actions[] = {
