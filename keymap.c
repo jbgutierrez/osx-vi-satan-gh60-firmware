@@ -86,37 +86,37 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |Ctrl|Alt |Gui!|      Space            |Gui  |Alt|Ctrl|Fn0  |
  * `-----------------------------------------------------------'
  */
-[_BA] = KEYMAP_ANSI(
-  TD(TD_ESC) , M(KF_1) , M(KF_2)     , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0)    , M(KF_MINS) , M(KF_EQL) , KC_BSLS     , \
-  LT_TAB     , KC_Q    , KC_W        , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P       , KC_LBRC    , KC_RBRC   , KC_BSPC     , \
-  T_CAPS     , KC_A    , KC_S        , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , KC_SCLN    , KC_QUOT    , /*        , */KC_ENT    , \
-  F(F_LSFT)  , /*      , */KC_Z      , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT     , KC_SLSH    , /*        , */F(F_RSFT) , \
-  KC_LCTL    , KC_LALT , TD(TD_LGUI) , /*      ,         ,         ,         , */LT_SPC , /*      ,         , */ KC_RALT , KC_RGUI    , KC_RCTL   , MO(HHKB))   ,
+[_BA] = KEYMAP_HHKB(
+  TD(TD_ESC) , M(KF_1) , M(KF_2)     , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0) , M(KF_MINS) , M(KF_EQL) , KC_BSLS      , KC_GRV     , \
+  LT_TAB     , KC_Q    , KC_W        , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P    , KC_LBRC    , KC_RBRC   , /*           , */ KC_BSPC , \
+  T_CAPS     , KC_A    , KC_S        , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , KC_SCLN , KC_QUOT    , /*        ,              , */ KC_ENT  , \
+  F(F_LSFT)  , /*      , */KC_Z      , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT  , KC_SLSH    , /*        , */ F(F_RSFT) , MO(HHKB)   , \
+  KC_LCTL    , KC_LALT , TD(TD_LGUI) , /*      ,         ,         ,         , */LT_SPC , /*      ,         ,         , */ KC_RALT , KC_RGUI   , KC_RCTL      , MO(HHKB))  ,
 
 
 /* Keymap _AR: Arrow Layer */
-[_AR] = KEYMAP_ANSI(
-  F(L_BSE) , _______ , _______   , _______ , KC_END  , _______   , KC_HOME , _______   , _______ , _______ , KC_HOME    , _______ , _______ , _______   , \
-  _______  , _______ , A_WORD    , A_END   , _______ , _______   , _______ , KC_PGUP   , KC_INS  , _______ , _______    , _______ , _______ , A_BSPC    , \
-  _______  , A_START , _______   , KC_PGDN , _______ , _______   , KC_LEFT , KC_DOWN   , KC_UP   , KC_RGHT , _______    , _______ , /*      , */_______ , \
-  _______  , /*      , */_______ , KC_DEL  , _______ , F(C_VMOD) , A_BWORD , A_FNEXT   , _______ , _______ , _______    , A_FIND  , /*      , */KC_UP   , \
-  _______  , _______ , _______   , /*      ,         ,           ,         , */_______ , /*      ,         , */ _______ , KC_LEFT , KC_DOWN , KC_RGHT)  ,
+[_AR] = KEYMAP_HHKB(
+  F(L_BSE) , _______ , _______   , _______ , KC_END  , _______   , KC_HOME , _______   , _______ , _______ , KC_HOME , _______    , _______ , _______  , _______    , \
+  _______  , _______ , A_WORD    , A_END   , _______ , _______   , _______ , KC_PGUP   , KC_INS  , _______ , _______ , _______    , _______ , /*       , */ A_BSPC  , \
+  _______  , A_START , _______   , KC_PGDN , _______ , _______   , KC_LEFT , KC_DOWN   , KC_UP   , KC_RGHT , _______ , _______    , /*      ,          , */ _______ , \
+  _______  , /*      , */_______ , KC_DEL  , _______ , F(C_VMOD) , A_BWORD , A_FNEXT   , _______ , _______ , _______ , A_FIND     , /*      , */ KC_UP , _______    , \
+  _______  , _______ , _______   , /*      ,         ,           ,         , */_______ , /*      ,         ,         , */ _______ , KC_LEFT , KC_DOWN  , KC_RGHT)   ,
 
 /* Keymap _MO: Media and Mouse Layer */
-[_MO] = KEYMAP_ANSI(
-  F(L_BSE) , KC_F14  , KC_F15     , _______ , _______ , _______ , _______ , KC_MPRV   , KC_MPLY , KC_MNXT , KC_MUTE    , KC_VOLD , KC_VOLU , _______    , \
-  _______  , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , _______ , _______    , \
-  _______  , _______ , _______    , KC_BTN1 , KC_BTN2 , _______ , KC_MS_L , KC_MS_D   , KC_MS_U , KC_MS_R , _______    , _______ , /*      , */ _______ , \
-  _______  , /*      , */ _______ , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , /*      , */ KC_MS_U , \
-  _______  , _______ , _______    , /*      ,         ,         ,         , */KC_MPLY , /*      ,         , */ _______ , KC_MS_L , KC_MS_D , KC_MS_R)   ,
+[_MO] = KEYMAP_HHKB(
+  F(L_BSE) , KC_F14  , KC_F15     , _______ , _______ , _______ , _______ , KC_MPRV   , KC_MPLY , KC_MNXT , KC_MUTE , KC_VOLD    , KC_VOLU , _______    , _______    , \
+  _______  , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______ , _______    , _______ , /*         , */ _______ , \
+  _______  , _______ , _______    , KC_BTN1 , KC_BTN2 , _______ , KC_MS_L , KC_MS_D   , KC_MS_U , KC_MS_R , _______ , _______    , /*      ,            , */ _______ , \
+  _______  , /*      , */ _______ , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______ , _______    , /*      , */ KC_MS_U , _______    , \
+  _______  , _______ , _______    , /*      ,         ,         ,         , */KC_MPLY , /*      ,         ,         , */ _______ , KC_MS_L , KC_MS_D    , KC_MS_R)   ,
 
 /* Keymap _WN: Windows Layer */
-[_WN] = KEYMAP_ANSI(
-  F(L_BSE) , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______  , _______    , _______ , _______ , _______   , \
-  _______  , W_CALL  , W_WIND     , W_EXPO  , _______ , _______ , _______ , _______   , _______ , W_TOGGLE , W_PREV     , _______ , _______ , _______   , \
-  _______  , _______ , _______    , KC_F11  , W_MAX   , _______ , W_LEFT  , W_DOWN    , W_UP    , W_RGHT   , _______    , _______ , /*      , */_______ , \
-  _______  , /*      , */ _______ , _______ , W_CENT  , _______ , _______ , W_NEXT    , _______ , _______  , _______    , _______ , /*      , */_______ , \
-  _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,          , */ _______ , _______ , _______ , _______)  ,
+[_WN] = KEYMAP_HHKB(
+  F(L_BSE) , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______  , _______ , _______    , _______ , _______   , _______    , \
+  _______  , W_CALL  , W_WIND     , W_EXPO  , _______ , _______ , _______ , _______   , _______ , W_TOGGLE , W_PREV  , _______    , _______ , /*        , */ _______ , \
+  _______  , _______ , _______    , KC_F11  , W_MAX   , _______ , W_LEFT  , W_DOWN    , W_UP    , W_RGHT   , _______ , _______    , /*      ,           , */ _______ , \
+  _______  , /*      , */ _______ , _______ , W_CENT  , _______ , _______ , W_NEXT    , _______ , _______  , _______ , _______    , /*      , */_______ , _______    , \
+  _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,          ,         , */ _______ , _______ , _______   , _______)   ,
 
 /* Keymap _SY: Symbols Layer
  * ,-----------------------------------------------------------.
@@ -131,28 +131,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |    |    |    |                      *|     |    |    |    |
  * `-----------------------------------------------------------'
  */
-[_SY] = KEYMAP_ANSI(
-  F(L_BSE) , KC_EXLM , KC_AT      , KC_HASH  , KC_DLR  , KC_PERC , KC_CIRC , KC_AMPR   , KC_ASTR , KC_LPRN , KC_RPRN    , KC_UNDS , KC_PLUS , KC_DEL    , \
-  _______  , KC_QUES , _______    , KC_EQUAL , _______ , _______ , KC_PERC , KC_UNDS   , _______ , KC_PIPE , KC_PLUS    , KC_RBRC , _______ , _______   , \
-  _______  , KC_AMPR , KC_DLR     , KC_LCBR  , KC_LPRN , _______ , KC_HASH , KC_RPRN   , KC_RCBR , _______ , KC_COLN    , KC_DQUO , /*      , */_______ , \
-  _______  , /*      , */ _______ , _______  , KC_CIRC , _______ , KC_BSLS , KC_EXLM   , KC_MINS , KC_LABK , KC_RABK    , KC_QUES , /*      , */_______ , \
-  _______  , _______ , _______    , /*       ,         ,         ,         , */KC_PAST , /*      ,         , */ _______ , _______ , _______ , _______)  ,
+[_SY] = KEYMAP_HHKB(
+  F(L_BSE) , KC_EXLM , KC_AT      , KC_HASH  , KC_DLR  , KC_PERC , KC_CIRC , KC_AMPR   , KC_ASTR , KC_LPRN , KC_RPRN , KC_UNDS    , KC_PLUS , KC_PIPE    , KC_TILD    , \
+  _______  , KC_QUES , _______    , KC_EQUAL , _______ , _______ , KC_PERC , KC_UNDS   , _______ , KC_PIPE , KC_PLUS , KC_LBRC    , KC_RBRC , /*         , */ KC_DEL , \
+  _______  , KC_AMPR , KC_DLR     , KC_LCBR  , KC_LPRN , _______ , KC_HASH , KC_RPRN   , KC_RCBR , _______ , KC_COLN , KC_DQUO    , /*      ,            , */ _______ , \
+  _______  , /*      , */ _______ , _______  , KC_CIRC , _______ , KC_BSLS , KC_EXLM   , KC_MINS , KC_LABK , KC_RABK , KC_QUES    , /*      , */ _______ , _______    , \
+  _______  , _______ , _______    , /*       ,         ,         ,         , */KC_PAST , /*      ,         ,         , */ _______ , _______ , _______    , _______)   ,
 
 /* Keymap _HW: Hardware Layer */
-[_HW] = KEYMAP_ANSI(
-  F(L_BSE) , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , _______ , _______   , \
-  _______  , _______ , _______    , _______ , RESET   , _______ , _______ , _______   , _______ , _______ , _______    , BL_DEC  , BL_INC  , BL_TOGG   , \
-  _______  , _______ , _______    , DEBUG   , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , /*      , */_______ , \
-  _______  , /*      , */ _______ , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______    , _______ , /*      , */_______ , \
-  _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,         , */ _______ , _______ , _______ , _______)  ,
+[_HW] = KEYMAP_HHKB(
+  F(L_BSE) , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______ , BL_TOGG , BL_INC     , BL_INC  , _______    , _______    , \
+  _______  , _______ , _______    , _______ , RESET   , _______ , _______ , _______   , _______ , _______ , _______ , _______    , _______ , /*         , */ _______ , \
+  _______  , _______ , _______    , DEBUG   , _______ , _______ , _______ , _______   , _______ , _______ , _______ , _______    , /*      ,            , */ _______ , \
+  _______  , /*      , */ _______ , _______ , _______ , _______ , _______ , _______   , _______ , _______ , _______ , _______    , /*      , */ _______ , _______    , \
+  _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,         ,         , */ _______ , _______ , _______    , _______)   ,
 
 /* Keymap HHKB: HHKB mode (HHKB Fn) */
-[HHKB] = KEYMAP_ANSI(
-  KC_PWR  , KC_F1   , KC_F2      , KC_F3   , KC_F4   , KC_F5   , KC_F6   , KC_F7     , KC_F8   , KC_F9   , KC_F10     , KC_F11  , KC_INS  , KC_DEL     , \
-  KC_CAPS , _______ , _______    , _______ , _______ , _______ , _______ , _______   , KC_PSCR , KC_SLCK , KC_PAUS    , KC_UP   , _______ , KC_BSPC    , \
-  _______ , KC_VOLD , KC_VOLU    , KC_MUTE , _______ , _______ , KC_PAST , KC_PSLS   , KC_HOME , KC_PGUP , KC_LEFT    , KC_RGHT , /*      , */ KC_PENT , \
-  _______ , /*      , */ _______ , _______ , _______ , _______ , _______ , KC_PPLS   , KC_PMNS , KC_END  , KC_PGDN    , KC_DOWN , /*      , */ _______ , \
-  _______ , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,         , */ _______ , _______ , _______ , _______)   ,
+[HHKB] = KEYMAP_HHKB(
+  KC_PWR  , KC_F1   , KC_F2      , KC_F3   , KC_F4   , KC_F5   , KC_F6   , KC_F7     , KC_F8   , KC_F9   , KC_F10  , KC_F11     , KC_F12  , KC_INS     , KC_DEL     , \
+  KC_CAPS , _______ , _______    , _______ , _______ , _______ , _______ , _______   , KC_PSCR , KC_SLCK , KC_PAUS , KC_UP      , _______ , /*         , */ KC_BSPC , \
+  _______ , KC_VOLD , KC_VOLU    , KC_MUTE , _______ , _______ , KC_PAST , KC_PSLS   , KC_HOME , KC_PGUP , KC_LEFT , KC_RGHT    , /*      ,            , */ KC_PENT , \
+  _______ , /*      , */ _______ , _______ , _______ , _______ , _______ , KC_PPLS   , KC_PMNS , KC_END  , KC_PGDN , KC_DOWN    , /*      , */ _______ , _______    , \
+  _______ , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,         ,         , */ _______ , _______ , _______    , _______)   ,
 };
 
 #define TAP_ONE(code) register_code(code); unregister_code(code)
