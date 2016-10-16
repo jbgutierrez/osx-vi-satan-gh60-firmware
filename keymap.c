@@ -72,26 +72,11 @@ enum key_id {
 
   C_VMOD,
 
-  // Function / number keys
-  KF_1, // 1, F1
-  KF_2, // 2, F2
-  KF_3, // ...
-  KF_4,
-  KF_5,
-  KF_6,
-  KF_7,
-  KF_8,
-  KF_9,
-  KF_0,
-  KF_MINS,
-  KF_EQL, // =, F12
-
   // Tap dancing definintions
   TD_ESC,
   TD_LGUI,
 };
 
-uint16_t kf_timers[12];
 uint16_t quot_timer = 0;
 uint16_t scln_timer = 0;
 bool spanish_detection = true;
@@ -105,17 +90,17 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |-----------------------------------------------------------|
  * |Ctrl!  |  A|  S|  D|  F|  G|  H|  J|  K|  L|  ;|  '|Return |
  * |-----------------------------------------------------------|
- * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /|Shift     |
+ * |Shift   |  Z|  X|  C|  V|  B|  N|  M|  ,|  .|  /| Shift|Fn0|
  * |-----------------------------------------------------------|
  * |Ctrl|Alt |Gui!|      Space            |Gui  |Alt|Ctrl|Fn0  |
  * `-----------------------------------------------------------'
  */
 [_BA] = KEYMAP_HHKB(
-  TD(TD_ESC) , M(KF_1) , M(KF_2)     , M(KF_3) , M(KF_4) , M(KF_5) , M(KF_6) , M(KF_7)  , M(KF_8) , M(KF_9) , M(KF_0) , M(KF_MINS) , M(KF_EQL) , KC_BSLS      , KC_GRV     , \
-  LT_TAB     , KC_Q    , KC_W        , KC_E    , KC_R    , KC_T    , KC_Y    , KC_U     , KC_I    , KC_O    , KC_P    , KC_LBRC    , KC_RBRC   , /*           , */ KC_BSPC , \
-  T_CAPS     , KC_A    , KC_S        , KC_D    , KC_F    , KC_G    , KC_H    , KC_J     , KC_K    , KC_L    , KC_SCLN , KC_QUOT    , /*        ,              , */ KC_ENT  , \
-  F(F_LSFT)  , /*      , */KC_Z      , KC_X    , KC_C    , KC_V    , KC_B    , KC_N     , KC_M    , KC_COMM , KC_DOT  , KC_SLSH    , /*        , */ F(F_RSFT) , MO(HHKB)   , \
-  KC_LCTL    , KC_LALT , TD(TD_LGUI) , /*      ,         ,         ,         , */LT_SPC , /*      ,         ,         , */ KC_RALT , KC_RGUI   , KC_RCTL      , MO(HHKB))  ,
+  TD(TD_ESC) , KC_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS    , KC_EQL  , KC_BSLS    , KC_GRV     , \
+  LT_TAB     , KC_Q    , KC_W        , KC_E , KC_R , KC_T , KC_Y , KC_U     , KC_I , KC_O    , KC_P    , KC_LBRC    , KC_RBRC , /*         , */ KC_BSPC , \
+  T_CAPS     , KC_A    , KC_S        , KC_D , KC_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT    , /*      ,            , */ KC_ENT  , \
+  KC_LSFT    , /*      , */KC_Z      , KC_X , KC_C , KC_V , KC_B , KC_N     , KC_M , KC_COMM , KC_DOT  , KC_SLSH    , /*      , */ KC_RSFT , MO(HHKB)   , \
+  KC_LCTL    , KC_LALT , TD(TD_LGUI) , /*   ,      ,      ,      , */LT_SPC , /*   ,         ,         , */ KC_RGUI , KC_RALT , KC_RCTL    , MO(HHKB))  ,
 
 
 /* Keymap _AR: Arrow Layer */
@@ -240,35 +225,9 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
   }
 }
 
-const macro_t *ang_handle_kf(keyrecord_t *record, uint8_t id) {
-  uint8_t code = id - KF_1;
-
-  if (record->event.pressed) {
-    kf_timers[code] = timer_read();
-  } else {
-    uint8_t kc;
-
-    if (timer_elapsed(kf_timers[code]) > TAPPING_TERM) {
-      // Long press
-      kc = KC_F1 + code;
-    } else {
-      switch(id) {
-        case KF_EQL: kc = KC_EQL; break;
-        case KF_MINS: kc = KC_MINS; break;
-        default: kc = KC_1 + code; break;
-      }
-    }
-
-    TAP_ONE(kc);
-  }
-  return MACRO_NONE;
-}
-
 const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
   switch(id) {
     case 0: return MACRODOWN(TYPE(KC_RSFT), END);
-
-    case KF_1 ... KF_EQL: return ang_handle_kf(record, id);
   }
   return MACRO_NONE;
 };
