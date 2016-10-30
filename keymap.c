@@ -26,13 +26,15 @@
 #include "mousekey.h"
 #include "action_tapping.h"
 
-#define _BA 0
-#define _AR 1
-#define _MO 2
-#define _WN 3
-#define _HW 4
-#define _SY 5
-#define HHKB 6
+enum layers {
+  _BA,
+  _AR,
+  _MO,
+  _WN,
+  _HW,
+  _SY,
+  HHKB,
+};
 
 #define _______ KC_TRNS
 
