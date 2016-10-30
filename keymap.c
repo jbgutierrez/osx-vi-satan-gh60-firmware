@@ -31,6 +31,7 @@ enum layers {
   _AR,
   _MO,
   _WN,
+  _NU,
   _HW,
   _SY,
   HHKB,
@@ -62,6 +63,7 @@ enum layers {
 #define LT_SPC LT(_AR, KC_SPC)
 #define LT_TAB LT(_WN, KC_TAB)
 #define LT_CAPS LT(_SY, KC_CAPS)
+#define LT_F LT(_NU, KC_F)
 
 #define T_CAPS CTL_T(KC_ESC)
 
@@ -100,7 +102,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_BA] = KEYMAP_HHKB(
   TD(TD_ESC) , KC_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS    , KC_EQL  , KC_BSLS    , KC_GRV     , \
   LT_TAB     , KC_Q    , KC_W        , KC_E , KC_R , KC_T , KC_Y , KC_U     , KC_I , KC_O    , KC_P    , KC_LBRC    , KC_RBRC , /*         , */ KC_BSPC , \
-  T_CAPS     , KC_A    , KC_S        , KC_D , KC_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT    , /*      ,            , */ KC_ENT  , \
+  T_CAPS     , KC_A    , KC_S        , KC_D , LT_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT    , /*      ,            , */ KC_ENT  , \
   KC_LSFT    , /*      , */KC_Z      , KC_X , KC_C , KC_V , KC_B , KC_N     , KC_M , KC_COMM , KC_DOT  , KC_SLSH    , /*      , */ KC_RSFT , MO(HHKB)   , \
   KC_LCTL    , KC_LALT , TD(TD_LGUI) , /*   ,      ,      ,      , */LT_SPC , /*   ,         ,         , */ KC_RGUI , KC_RALT , KC_RCTL    , MO(HHKB))  ,
 
@@ -128,6 +130,14 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   _______  , _______ , _______    , KC_F11  , W_MAX   , _______ , W_LEFT  , W_DOWN    , W_UP    , W_RGHT   , _______ , _______    , /*      ,           , */ _______ , \
   _______  , /*      , */ _______ , _______ , W_CENT  , _______ , _______ , W_NEXT    , _______ , _______  , _______ , _______    , /*      , */_______ , _______    , \
   _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*      ,          ,         , */ _______ , _______ , _______   , _______)   ,
+
+/* Keymap _NU: Numpad Layer */
+[_NU] = KEYMAP_HHKB(
+  F(L_BSE) , _______ , _______    , _______ , _______ , _______ , _______ , KC_7      , KC_8 , KC_9    , KC_0  , _______    , _______ , _______ , _______    , \
+  _______  , _______ , _______    , _______ , _______ , _______ , _______ , KC_4      , KC_5 , KC_6    , _______ , _______    , _______ , /*      , */ _______ , \
+  _______  , _______ , _______    , _______ , _______ , _______ , _______ , KC_1      , KC_2 , KC_3    , _______ , _______    , /*      ,         , */ _______ , \
+  _______  , /*      , */ _______ , _______ , _______ , _______ , _______ , _______   , KC_0 , _______ , _______ , _______    , _______ , /*      , */ _______ , \
+  _______  , _______ , _______    , /*      ,         ,         ,         , */_______ , /*   ,         ,         , */ _______ , _______ , _______ , _______)   ,
 
 /* Keymap _SY: Symbols Layer
  * ,-----------------------------------------------------------.
@@ -352,6 +362,10 @@ void matrix_scan_user(void) {
     /* `m` activates mouse and media layer */
     SEQ_ONE_KEY(KC_M) {
       layer_on(_MO);
+    }
+    /* `n` activates numpad layer */
+    SEQ_ONE_KEY(KC_N) {
+      layer_on(_NU);
     }
     /* `p` types password */
     PASSWORD_SEQUENCE {
