@@ -62,7 +62,6 @@ enum layers {
 
 #define LT_SPC LT(_AR, KC_SPC)
 #define LT_TAB LT(_WN, KC_TAB)
-#define LT_CAPS LT(_SY, KC_CAPS)
 #define LT_F LT(_NU, KC_F)
 
 #define T_CAPS CTL_T(KC_ESC)
@@ -71,13 +70,9 @@ enum key_id {
   NONE = 0,
   L_BSE,
 
-  F_LSFT,
-  F_RSFT,
-
   C_VMOD,
 
   // Tap dancing definintions
-  TD_ESC,
   TD_LGUI,
 };
 
@@ -100,7 +95,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------'
  */
 [_BA] = KEYMAP_HHKB(
-  TD(TD_ESC) , KC_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS    , KC_EQL  , KC_BSLS    , KC_GRV     , \
+  KC_ESC     , KC_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS    , KC_EQL  , KC_BSLS    , KC_GRV     , \
   LT_TAB     , KC_Q    , KC_W        , KC_E , KC_R , KC_T , KC_Y , KC_U     , KC_I , KC_O    , KC_P    , KC_LBRC    , KC_RBRC , /*         , */ KC_BSPC , \
   T_CAPS     , KC_A    , KC_S        , KC_D , LT_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT    , /*      ,            , */ KC_ENT  , \
   KC_LSFT    , /*      , */KC_Z      , KC_X , KC_C , KC_V , KC_B , KC_N     , KC_M , KC_COMM , KC_DOT  , KC_SLSH    , /*      , */ KC_RSFT , MO(HHKB)   , \
@@ -180,27 +175,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #define TAP_TWO(code1, code2) register_code(code1); register_code(code2); unregister_code(code2); unregister_code(code1);
 #define TAP_THREE(code1, code2, code3) register_code(code1); register_code(code2); register_code(code3); unregister_code(code3); unregister_code(code2); unregister_code(code1);
 
-void esc_tap_dance_fn(qk_tap_dance_state_t *state, void *user_data) {
-  switch(state->count) {
-    case 2:
-      TAP_TWO(KC_RSFT, KC_GRV);
-      break;
-    case 3:
-      TAP_ONE(KC_GRV);
-      break;
-    default:
-      TAP_ONE(KC_ESC);
-      return;
-  }
-};
-
 void on_lgui_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
   if (state->pressed) { register_code(KC_LGUI); }
 }
 
 void on_lgui_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
-  uint8_t guimask = get_mods() & (MOD_BIT(KC_LGUI)|MOD_BIT(KC_RGUI));
-  if (guimask) {
+  uint8_t mask = get_mods() & (MOD_BIT(KC_LGUI)|MOD_BIT(KC_RGUI));
+  if (mask) {
     unregister_code(KC_LGUI);
   } else {
     keyevent_t event = { pressed: true };
@@ -210,15 +191,11 @@ void on_lgui_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
 };
 
 extern qk_tap_dance_action_t tap_dance_actions[] = {
-  [TD_ESC]  = ACTION_TAP_DANCE_FN(esc_tap_dance_fn),
   [TD_LGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_lgui_tap_dance_finished_fn, on_lgui_tap_dance_reset_fn),
 };
 
 const uint16_t PROGMEM fn_actions[] = {
   [L_BSE]  = ACTION_LAYER_CLEAR(ON_PRESS),
-
-  [F_LSFT] = ACTION_MODS_ONESHOT(MOD_LSFT),
-  [F_RSFT] = ACTION_MODS_ONESHOT(MOD_RSFT),
   [C_VMOD] = ACTION_FUNCTION(C_VMOD),
 };
 
@@ -237,16 +214,9 @@ void action_function(keyrecord_t *record, uint8_t id, uint8_t opt) {
   }
 }
 
-const macro_t *action_get_macro(keyrecord_t *record, uint8_t id, uint8_t opt) {
-  switch(id) {
-    case 0: return MACRODOWN(TYPE(KC_RSFT), END);
-  }
-  return MACRO_NONE;
-};
-
 LEADER_EXTERNS();
 
-bool send_alt(uint16_t keycode) {
+void send_alt(uint16_t keycode) {
   bool caps_lock = host_keyboard_leds() & (1<<USB_LED_CAPS_LOCK);
   uint8_t shiftmask = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
   del_mods(shiftmask);
@@ -271,9 +241,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_U:
           send_alt(KC_E);
           break;
-        case KC_QUOT:
-          TAP_TWO(KC_RSFT, KC_QUOT);
-          return false;
         default:
           TAP_ONE(KC_QUOT);
           break;
@@ -295,9 +262,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
           send_alt(KC_N);
           TAP_ONE(KC_N);
           break;
-        case KC_SCLN:
-          TAP_TWO(KC_RSFT, KC_SCLN);
-          return false;
         default:
           TAP_ONE(KC_SCLN);
           break;
@@ -351,6 +315,10 @@ void matrix_scan_user(void) {
     SEQ_ONE_KEY(KC_A) {
       layer_on(_AR);
     }
+    /* `c` activates arrow layer */
+    SEQ_ONE_KEY(KC_C) {
+      layer_on(_AR);
+    }
     /* `h` activates hardware layer */
     SEQ_ONE_KEY(KC_H) {
       layer_on(_HW);
@@ -380,7 +348,7 @@ void matrix_scan_user(void) {
       TAP_THREE(KC_LGUI, KC_LSFT, KC_3);
     }
     /* `esc` moves focus to the menu bar */
-    SEQ_ONE_KEY(TD(TD_ESC)) {
+    SEQ_ONE_KEY(KC_ESC) {
       TAP_TWO(KC_LCTL, KC_F2);
     }
     /* `ss` saves screenshot of selected area */
@@ -402,6 +370,9 @@ void matrix_scan_user(void) {
     /* `u` types username */
     SEQ_ONE_KEY (KC_U) {
       SEND_STRING (USERNAME);
+    }
+    SEQ_ONE_KEY(KC_RALT) {
+      spanish_detection = !spanish_detection;
     }
     /* `w` activates window layer */
     SEQ_ONE_KEY(KC_W) {
