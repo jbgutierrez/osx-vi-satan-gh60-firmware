@@ -61,7 +61,7 @@ enum layers {
 #define W_CALL LGUI(LALT(KC_W))
 
 #define LT_SPC LT(_AR, KC_SPC)
-#define LT_TAB LT(_WN, KC_TAB)
+#define LT_ESC LT(_WN, KC_ESC)
 #define LT_F LT(_NU, KC_F)
 
 #define T_CAPS CTL_T(KC_ESC)
@@ -95,8 +95,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------'
  */
 [_BA] = KEYMAP_HHKB(
-  KC_ESC     , KC_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS    , KC_EQL  , KC_BSLS    , KC_GRV     , \
-  LT_TAB     , KC_Q    , KC_W        , KC_E , KC_R , KC_T , KC_Y , KC_U     , KC_I , KC_O    , KC_P    , KC_LBRC    , KC_RBRC , /*         , */ KC_BSPC , \
+  LT_ESC     , KC_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS    , KC_EQL  , KC_BSLS    , KC_GRV     , \
+  KC_TAB     , KC_Q    , KC_W        , KC_E , KC_R , KC_T , KC_Y , KC_U     , KC_I , KC_O    , KC_P    , KC_LBRC    , KC_RBRC , /*         , */ KC_BSPC , \
   T_CAPS     , KC_A    , KC_S        , KC_D , LT_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT    , /*      ,            , */ KC_ENT  , \
   KC_LSFT    , /*      , */KC_Z      , KC_X , KC_C , KC_V , KC_B , KC_N     , KC_M , KC_COMM , KC_DOT  , KC_SLSH    , /*      , */ KC_RSFT , MO(HHKB)   , \
   KC_LCTL    , KC_LALT , TD(TD_LGUI) , /*   ,      ,      ,      , */LT_SPC , /*   ,         ,         , */ KC_RGUI , KC_RALT , KC_RCTL    , MO(HHKB))  ,
@@ -120,7 +120,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 /* Keymap _WN: Windows Layer */
 [_WN] = KEYMAP_HHKB(
-  F(L_BSE) , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______  , _______ , _______    , _______ , _______   , _______    , \
+  _______  , _______ , _______    , _______ , _______ , _______ , _______ , _______   , _______ , _______  , _______ , _______    , _______ , _______   , _______    , \
   _______  , W_CALL  , W_WIND     , W_EXPO  , _______ , _______ , _______ , _______   , _______ , W_TOGGLE , W_PREV  , _______    , _______ , /*        , */ _______ , \
   _______  , _______ , _______    , KC_F11  , W_MAX   , _______ , W_LEFT  , W_DOWN    , W_UP    , W_RGHT   , _______ , _______    , /*      ,           , */ _______ , \
   _______  , /*      , */ _______ , _______ , W_CENT  , _______ , _______ , W_NEXT    , _______ , _______  , _______ , _______    , /*      , */_______ , _______    , \
@@ -299,10 +299,6 @@ void matrix_scan_user(void) {
   LEADER_DICTIONARY() {
     leading = false;
     leader_end();
-    /* `tab` one shot modifier for tab */
-    SEQ_ONE_KEY(LT_TAB) {
-      TAP_TWO(KC_LGUI, KC_TAB);
-    }
     /* `tab` toggles Caps Lock */
     SEQ_ONE_KEY(T_CAPS) {
       TAP_ONE(KC_CAPS);
@@ -348,7 +344,7 @@ void matrix_scan_user(void) {
       TAP_THREE(KC_LGUI, KC_LSFT, KC_3);
     }
     /* `esc` moves focus to the menu bar */
-    SEQ_ONE_KEY(KC_ESC) {
+    SEQ_ONE_KEY(LT_ESC) {
       TAP_TWO(KC_LCTL, KC_F2);
     }
     /* `ss` saves screenshot of selected area */
@@ -373,10 +369,6 @@ void matrix_scan_user(void) {
     }
     SEQ_ONE_KEY(KC_RALT) {
       spanish_detection = !spanish_detection;
-    }
-    /* `w` activates window layer */
-    SEQ_ONE_KEY(KC_W) {
-      layer_on(_WN);
     }
   }
 }
