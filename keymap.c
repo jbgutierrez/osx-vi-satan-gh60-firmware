@@ -62,7 +62,7 @@ enum layers {
 
 #define LT_SPC LT(_AR, KC_SPC)
 #define LT_ESC LT(_WN, KC_ESC)
-#define LT_F LT(_NU, KC_F)
+#define LT_1 LT(_NU, KC_1)
 
 #define T_CAPS CTL_T(KC_ESC)
 
@@ -95,9 +95,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------'
  */
 [_BA] = KEYMAP_HHKB(
-  LT_ESC     , KC_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS    , KC_EQL  , KC_BSLS    , KC_GRV     , \
+  LT_ESC     , LT_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS    , KC_EQL  , KC_BSLS    , KC_GRV     , \
   KC_TAB     , KC_Q    , KC_W        , KC_E , KC_R , KC_T , KC_Y , KC_U     , KC_I , KC_O    , KC_P    , KC_LBRC    , KC_RBRC , /*         , */ KC_BSPC , \
-  T_CAPS     , KC_A    , KC_S        , KC_D , LT_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT    , /*      ,            , */ KC_ENT  , \
+  T_CAPS     , KC_A    , KC_S        , KC_D , KC_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT    , /*      ,            , */ KC_ENT  , \
   KC_LSFT    , /*      , */KC_Z      , KC_X , KC_C , KC_V , KC_B , KC_N     , KC_M , KC_COMM , KC_DOT  , KC_SLSH    , /*      , */ KC_RSFT , MO(HHKB)   , \
   KC_LCTL    , KC_LALT , TD(TD_LGUI) , /*   ,      ,      ,      , */LT_SPC , /*   ,         ,         , */ KC_RGUI , KC_RALT , KC_RCTL    , MO(HHKB))  ,
 
