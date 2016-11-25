@@ -74,6 +74,7 @@ enum key_id {
 
   // Tap dancing definintions
   TD_LGUI,
+  TD_RGUI,
 };
 
 uint16_t quot_timer = 0;
@@ -99,7 +100,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TAB     , KC_Q    , KC_W        , KC_E , KC_R , KC_T , KC_Y , KC_U     , KC_I , KC_O    , KC_P    , KC_LBRC    , KC_RBRC , /*         , */ KC_BSPC , \
   T_CAPS     , KC_A    , KC_S        , KC_D , KC_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT    , /*      ,            , */ KC_ENT  , \
   KC_LSFT    , /*      , */KC_Z      , KC_X , KC_C , KC_V , KC_B , KC_N     , KC_M , KC_COMM , KC_DOT  , KC_SLSH    , /*      , */ KC_RSFT , MO(HHKB)   , \
-  KC_LCTL    , KC_LALT , TD(TD_LGUI) , /*   ,      ,      ,      , */LT_SPC , /*   ,         ,         , */ KC_RGUI , KC_RALT , KC_RCTL    , MO(HHKB))  ,
+  KC_LCTL    , KC_LALT , TD(TD_LGUI) , /*   ,      ,      ,      , */LT_SPC , /*   ,         ,         , */ TD(TD_RGUI) , KC_RALT , KC_RCTL    , MO(HHKB))  ,
 
 
 /* Keymap _AR: Arrow Layer */
@@ -190,8 +191,22 @@ void on_lgui_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
   }
 };
 
+void on_rgui_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
+  if (state->pressed) {
+    layer_on(HHKB);
+  } else {
+    TAP_TWO(KC_RCTL, KC_B);
+    TAP_ONE(state->count > 1 ? KC_Z : KC_S);
+  }
+}
+
+void on_rgui_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
+  layer_off(HHKB);
+}
+
 extern qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_LGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_lgui_tap_dance_finished_fn, on_lgui_tap_dance_reset_fn),
+  [TD_RGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_rgui_tap_dance_finished_fn, on_rgui_tap_dance_reset_fn),
 };
 
 const uint16_t PROGMEM fn_actions[] = {
