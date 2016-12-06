@@ -75,6 +75,8 @@ enum key_id {
   // Tap dancing definintions
   TD_LGUI,
   TD_RGUI,
+  TD_LSFT,
+  TD_RSFT,
 };
 
 uint16_t quot_timer = 0;
@@ -96,11 +98,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------'
  */
 [_BA] = KEYMAP_HHKB(
-  LT_ESC     , LT_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS    , KC_EQL  , KC_BSLS    , KC_GRV     , \
-  KC_TAB     , KC_Q    , KC_W        , KC_E , KC_R , KC_T , KC_Y , KC_U     , KC_I , KC_O    , KC_P    , KC_LBRC    , KC_RBRC , /*         , */ KC_BSPC , \
-  T_CAPS     , KC_A    , KC_S        , KC_D , KC_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT    , /*      ,            , */ KC_ENT  , \
-  KC_LSFT    , /*      , */KC_Z      , KC_X , KC_C , KC_V , KC_B , KC_N     , KC_M , KC_COMM , KC_DOT  , KC_SLSH    , /*      , */ KC_RSFT , MO(HHKB)   , \
-  KC_LCTL    , KC_LALT , TD(TD_LGUI) , /*   ,      ,      ,      , */LT_SPC , /*   ,         ,         , */ TD(TD_RGUI) , KC_RALT , KC_RCTL    , MO(HHKB))  ,
+  LT_ESC      , LT_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS        , KC_EQL  , KC_BSLS        , KC_GRV     , \
+  KC_TAB      , KC_Q    , KC_W        , KC_E , KC_R , KC_T , KC_Y , KC_U     , KC_I , KC_O    , KC_P    , KC_LBRC        , KC_RBRC , /*             , */ KC_BSPC , \
+  T_CAPS      , KC_A    , KC_S        , KC_D , KC_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT        , /*      ,                , */ KC_ENT  , \
+  TD(TD_LSFT) , /*      , */KC_Z      , KC_X , KC_C , KC_V , KC_B , KC_N     , KC_M , KC_COMM , KC_DOT  , KC_SLSH        , /*      , */ TD(TD_RSFT) , MO(HHKB)   , \
+  KC_LCTL     , KC_LALT , TD(TD_LGUI) , /*   ,      ,      ,      , */LT_SPC , /*   ,         ,         , */ TD(TD_RGUI) , KC_RALT , KC_RCTL        , MO(HHKB))  ,
 
 
 /* Keymap _AR: Arrow Layer */
@@ -207,6 +209,8 @@ void on_rgui_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
 extern qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_LGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_lgui_tap_dance_finished_fn, on_lgui_tap_dance_reset_fn),
   [TD_RGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_rgui_tap_dance_finished_fn, on_rgui_tap_dance_reset_fn),
+  [TD_LSFT] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_CAPS),
+  [TD_RSFT] = ACTION_TAP_DANCE_DOUBLE(KC_RSFT, KC_CAPS),
 };
 
 const uint16_t PROGMEM fn_actions[] = {
