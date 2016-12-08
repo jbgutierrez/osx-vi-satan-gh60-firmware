@@ -64,8 +64,6 @@ enum layers {
 #define LT_ESC LT(_WN, KC_ESC)
 #define LT_1 LT(_NU, KC_1)
 
-#define T_CAPS CTL_T(KC_ESC)
-
 enum key_id {
   NONE = 0,
   L_BSE,
@@ -76,8 +74,7 @@ enum key_id {
   TD_LGUI,
   TD_RGUI,
   TD_RALT,
-  TD_LSFT,
-  TD_RSFT,
+  TD_CAPS,
 };
 
 uint16_t quot_timer = 0;
@@ -99,11 +96,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * `-----------------------------------------------------------'
  */
 [_BA] = KEYMAP_HHKB(
-  LT_ESC      , LT_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS        , KC_EQL  , KC_BSLS        , KC_GRV     , \
-  KC_TAB      , KC_Q    , KC_W        , KC_E , KC_R , KC_T , KC_Y , KC_U     , KC_I , KC_O    , KC_P    , KC_LBRC        , KC_RBRC , /*             , */ KC_BSPC , \
-  T_CAPS      , KC_A    , KC_S        , KC_D , KC_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT        , /*      ,                , */ KC_ENT  , \
-  TD(TD_LSFT) , /*      , */KC_Z      , KC_X , KC_C , KC_V , KC_B , KC_N     , KC_M , KC_COMM , KC_DOT  , KC_SLSH        , /*      , */ TD(TD_RSFT) , MO(HHKB)   , \
-  KC_LCTL     , KC_LALT , TD(TD_LGUI) , /*   ,      ,      ,      , */LT_SPC , /*   ,         ,         , */ TD(TD_RGUI) , TD(TD_RALT) , KC_RCTL        , MO(HHKB))  ,
+  LT_ESC      , LT_1    , KC_2        , KC_3 , KC_4 , KC_5 , KC_6 , KC_7     , KC_8 , KC_9    , KC_0    , KC_MINS        , KC_EQL      , KC_BSLS    , KC_GRV     , \
+  KC_TAB      , KC_Q    , KC_W        , KC_E , KC_R , KC_T , KC_Y , KC_U     , KC_I , KC_O    , KC_P    , KC_LBRC        , KC_RBRC     , /*         , */ KC_BSPC , \
+  TD(TD_CAPS) , KC_A    , KC_S        , KC_D , KC_F , KC_G , KC_H , KC_J     , KC_K , KC_L    , KC_SCLN , KC_QUOT        , /*          ,            , */ KC_ENT  , \
+  KC_LSFT     , /*      , */KC_Z      , KC_X , KC_C , KC_V , KC_B , KC_N     , KC_M , KC_COMM , KC_DOT  , KC_SLSH        , /*          , */ KC_RSFT , MO(HHKB)   , \
+  KC_LCTL     , KC_LALT , TD(TD_LGUI) , /*   ,      ,      ,      , */LT_SPC , /*   ,         ,         , */ TD(TD_RGUI) , TD(TD_RALT) , KC_RCTL    , MO(HHKB))  ,
 
 
 /* Keymap _AR: Arrow Layer */
@@ -220,12 +217,22 @@ void on_ralt_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
   if (state->pressed) { register_code(KC_RALT); }
 }
 
+void on_caps_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
+  register_code(state->pressed   ? KC_RCTL :
+                state->count > 1 ? KC_CAPS : KC_ESC);
+}
+
+void on_caps_tap_dance_reset_fn(qk_tap_dance_state_t *state, void *user_data) {
+  unregister_code(KC_RCTL);
+  unregister_code(KC_CAPS);
+  unregister_code(KC_ESC);
+}
+
 extern qk_tap_dance_action_t tap_dance_actions[] = {
   [TD_LGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_lgui_tap_dance_finished_fn, on_lgui_tap_dance_reset_fn),
   [TD_RGUI] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_rgui_tap_dance_finished_fn, on_rgui_tap_dance_reset_fn),
   [TD_RALT] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_ralt_tap_dance_finished_fn, on_ralt_tap_dance_reset_fn),
-  [TD_LSFT] = ACTION_TAP_DANCE_DOUBLE(KC_LSFT, KC_CAPS),
-  [TD_RSFT] = ACTION_TAP_DANCE_DOUBLE(KC_RSFT, KC_CAPS),
+  [TD_CAPS] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, on_caps_tap_dance_finished_fn, on_caps_tap_dance_reset_fn),
 };
 
 const uint16_t PROGMEM fn_actions[] = {
@@ -334,7 +341,7 @@ void matrix_scan_user(void) {
     leading = false;
     leader_end();
     /* `tab` toggles Caps Lock */
-    SEQ_ONE_KEY(T_CAPS) {
+    SEQ_ONE_KEY(TD_CAPS) {
       TAP_ONE(KC_CAPS);
     }
     /* `d` open debug panel */
