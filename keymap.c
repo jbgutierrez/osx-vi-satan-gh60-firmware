@@ -372,10 +372,15 @@ void matrix_scan_user(void) {
     SEQ_ONE_KEY(KC_N) {
       layer_on(_NU);
     }
-    /* `p` types password */
-    PASSWORD_SEQUENCE {
-      SEND_STRING (PASSWORD);
-    }
+    #ifdef PASSWORD
+    PASSWORD_SEQUENCE { SEND_STRING (PASSWORD); }
+    #endif
+    #ifdef PASSWORD2
+    PASSWORD2_SEQUENCE { SEND_STRING (PASSWORD2); }
+    #endif
+    #ifdef PASSWORD3
+    PASSWORD3_SEQUENCE { SEND_STRING (PASSWORD3); }
+    #endif
     /* `q` close all windows of current application */
     SEQ_ONE_KEY(KC_Q) {
       TAP_THREE(KC_LGUI, KC_LALT, KC_W);
