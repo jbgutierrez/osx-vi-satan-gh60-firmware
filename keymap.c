@@ -175,6 +175,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #define TAP_ONE(code) register_code(code); unregister_code(code)
 #define TAP_TWO(code1, code2) register_code(code1); register_code(code2); unregister_code(code2); unregister_code(code1);
 #define TAP_THREE(code1, code2, code3) register_code(code1); register_code(code2); register_code(code3); unregister_code(code3); unregister_code(code2); unregister_code(code1);
+#define TAP_HYPR(code) register_code(KC_LCTL); register_code(KC_LALT); register_code(KC_LSFT); register_code(KC_LGUI); register_code(code); unregister_code(code); unregister_code(KC_LGUI); unregister_code(KC_LSFT); unregister_code(KC_LALT); unregister_code(KC_LCTL)
 
 void on_lgui_tap_dance_finished_fn(qk_tap_dance_state_t *state, void *user_data) {
   if (state->pressed) { register_code(KC_LGUI); }
@@ -267,7 +268,7 @@ void send_alt(uint16_t keycode) {
   set_mods(shiftmask);
 }
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+bool process_spanish_chording(uint16_t keycode, keyrecord_t *record) {
   if (!spanish_detection) { return true; }
 
   if (record->event.pressed) {
@@ -317,8 +318,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
   return true;
 }
 
-uint8_t layer_was;
-void matrix_scan_user(void) {
+bool sticky_leading = false;
+uint16_t pending_sticky = 0;
+bool process_sticky(uint16_t keycode, keyrecord_t *record) {
+  if (record->event.pressed) {
+    bool sticky_pressed = keycode == KC_LSFT || keycode == KC_RSFT;
+    if (!sticky_leading && sticky_pressed) {
+      sticky_leading = true;
+      pending_sticky = timer_read();
+      return true;
+    }
+    if (sticky_leading) {
+      sticky_leading = false;
+      uint16_t sticky = timer_elapsed(pending_sticky) < 3 * LEADER_TIMEOUT;
+      uint8_t shiftmask = get_mods() & (MOD_BIT(KC_LSHIFT)|MOD_BIT(KC_RSHIFT));
+      if (!shiftmask && sticky) {
+        TAP_HYPR(keycode);
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
+void process_spanish_chording_pending(void) {
   if (spanish_detection) {
     if (quot_timer && timer_elapsed(quot_timer) > TAPPING_TERM) {
       quot_timer = 0;
@@ -330,6 +353,18 @@ void matrix_scan_user(void) {
       TAP_ONE(KC_SCLN);
     }
   }
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+  bool pending =
+    process_spanish_chording(keycode, record) &&
+    process_sticky(keycode, record);
+  return pending;
+}
+
+uint8_t layer_was;
+void matrix_scan_user(void) {
+  process_spanish_chording_pending();
 
   uint8_t layer = biton32(layer_state);
   if (layer != layer_was) {
