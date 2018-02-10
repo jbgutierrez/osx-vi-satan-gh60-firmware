@@ -362,6 +362,11 @@ void matrix_scan_user(void) {
     SEQ_ONE_KEY(KC_D) {
       TAP_THREE(KC_LGUI, KC_LALT, KC_I);
     }
+    /* `f` enters fullscreen */
+    SEQ_ONE_KEY(KC_F) {
+      TAP_TWO(KC_LGUI, KC_ENTER);
+      TAP_THREE(KC_LGUI, KC_LCTL, KC_F);
+    }
     /* `h` activates hardware layer */
     SEQ_ONE_KEY(KC_H) {
       layer_on(_HW);
